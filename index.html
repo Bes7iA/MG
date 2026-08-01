@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Máquinas de Guerra</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+
+<!-- ========================================== -->
+<!-- PANTALLA 1: INICIO DE JUEGO (LOBBY)        -->
+<!-- ========================================== -->
+<div id="pantalla-inicio" class="pantalla">
+    <div class="lobby-marco">
+        <p class="eyebrow">Juego de estrategia por turnos</p>
+        <h1 class="titulo-pantalla-inicio">Máquinas<br>de Guerra</h1>
+        <p class="lobby-descripcion">Conquista terreno, extrae recursos, construye tu ejército y derriba el castillo rival antes de que él derribe el tuyo.</p>
+        <button id="btnIniciar" class="btn-principal">Iniciar Partida ⚔️</button>
+    </div>
+</div>
+
+<!-- ========================================== -->
+<!-- PANTALLA 2: TABLERO DE JUEGO               -->
+<!-- ========================================== -->
+<div id="pantalla-juego" class="pantalla oculta">
+
+    <header class="topbar">
+        <h1 class="titulo-juego">Máquinas de Guerra</h1>
+        <div class="control-central">
+            <div class="indicador-turno-box" id="indicadorTurno">—</div>
+            <div class="indicador-dado" id="indicadorDado" title="Resultado del dado de este turno">🎲 —</div>
+            <button id="btnFinTurno">Terminar Turno ⌛</button>
+        </div>
+        <div class="indicador-ronda" id="indicadorRonda">Ronda 1</div>
+    </header>
+
+    <div class="contenedor-principal">
+
+        <!-- PANEL JUGADOR 1 (ROJO) -->
+        <aside class="panel-jugador" id="panel-p1">
+            <h2>🔴 Jugador 1</h2>
+            <div class="recursos-container" id="p1-recursos"></div>
+            <div class="info-castillo" id="p1-info-castillo"></div>
+            <div class="lista-maquinas" id="p1-maquinas"></div>
+        </aside>
+
+        <!-- TABLERO DE JUEGO -->
+        <div id="tablero-contenedor" class="tablero-mapa">
+            <img src="assets/tablero.png" id="imagen-tablero" alt="" onerror="this.style.display='none'">
+            <svg id="conexiones-svg" viewBox="0 0 100 100" preserveAspectRatio="none"></svg>
+
+            <!-- CASTILLOS -->
+            <div id="castillo-p1" class="zona-castillo castillo-rojo">
+                <div class="slots-castillo">
+                    <div id="castillo-p1-slot1" class="slot-castillo"></div>
+                    <div id="castillo-p1-slot2" class="slot-castillo"></div>
+                </div>
+                <div id="castillo-p1-canon" class="slot-canon"></div>
+                <div class="castillo-barra">
+                    <div class="hp-bar-container"><div class="hp-bar" id="p1-castillo-hpbar"></div></div>
+                    <span class="hp-texto" id="p1-castillo-hptexto">20/20</span>
+                </div>
+            </div>
+
+            <div id="castillo-p2" class="zona-castillo castillo-azul">
+                <div class="slots-castillo">
+                    <div id="castillo-p2-slot1" class="slot-castillo"></div>
+                    <div id="castillo-p2-slot2" class="slot-castillo"></div>
+                </div>
+                <div id="castillo-p2-canon" class="slot-canon"></div>
+                <div class="castillo-barra">
+                    <div class="hp-bar-container"><div class="hp-bar" id="p2-castillo-hpbar"></div></div>
+                    <span class="hp-texto" id="p2-castillo-hptexto">20/20</span>
+                </div>
+            </div>
+
+            <!-- NODOS DE TERRENO (29 CASILLAS) -->
+            <div id="nodo-1" class="nodo-terreno"></div>
+            <div id="nodo-2" class="nodo-terreno"></div>
+            <div id="nodo-3" class="nodo-terreno"></div>
+            <div id="nodo-4" class="nodo-terreno"></div>
+            <div id="nodo-5" class="nodo-terreno"></div>
+            <div id="nodo-6" class="nodo-terreno"></div>
+            <div id="nodo-7" class="nodo-terreno"></div>
+            <div id="nodo-8" class="nodo-terreno"></div>
+
+            <div id="nodo-9" class="nodo-terreno"></div>
+            <div id="nodo-10" class="nodo-terreno"></div>
+            <div id="nodo-11" class="nodo-terreno"></div>
+            <div id="nodo-12" class="nodo-terreno"></div>
+
+            <div id="nodo-13" class="nodo-terreno"></div>
+            <div id="nodo-14" class="nodo-terreno"></div>
+            <div id="nodo-15" class="nodo-terreno"></div>
+            <div id="nodo-16" class="nodo-terreno"></div>
+            <div id="nodo-17" class="nodo-terreno"></div>
+
+            <div id="nodo-18" class="nodo-terreno"></div>
+            <div id="nodo-19" class="nodo-terreno"></div>
+            <div id="nodo-20" class="nodo-terreno"></div>
+            <div id="nodo-21" class="nodo-terreno"></div>
+
+            <div id="nodo-22" class="nodo-terreno"></div>
+            <div id="nodo-23" class="nodo-terreno"></div>
+            <div id="nodo-24" class="nodo-terreno"></div>
+            <div id="nodo-25" class="nodo-terreno"></div>
+            <div id="nodo-26" class="nodo-terreno"></div>
+            <div id="nodo-27" class="nodo-terreno"></div>
+            <div id="nodo-28" class="nodo-terreno"></div>
+            <div id="nodo-29" class="nodo-terreno"></div>
+        </div>
+
+        <!-- PANEL JUGADOR 2 (AZUL) -->
+        <aside class="panel-jugador" id="panel-p2">
+            <h2>🔵 Jugador 2</h2>
+            <div class="recursos-container" id="p2-recursos"></div>
+            <div class="info-castillo" id="p2-info-castillo"></div>
+            <div class="lista-maquinas" id="p2-maquinas"></div>
+        </aside>
+
+    </div>
+
+    <!-- CONTROLES INFERIORES -->
+    <div class="barra-inferior">
+        <div class="acciones-principales" id="acciones-principales">
+            <button id="btnConstruirMG">🛠️ Máquina (3🪵 3⚙️)</button>
+            <button id="btnConstruirExtractor">⛏️ Extractor (2🪵 2⬛)</button>
+            <button id="btnConstruirCanon">💣 Cañón (4🪵 4⬛ 4⚙️)</button>
+            <button id="btnMejorarCastillo">🏰 Mejorar Castillo (4⚙️)</button>
+            <button id="btnComerciar">🔄 Comerciar (4→1)</button>
+            <button id="btnCancelarModo" class="btn-cancelar oculta">✖️ Cancelar</button>
+        </div>
+
+        <div class="panel-maquina-seleccionada oculta" id="panel-maquina-sel">
+            <span id="info-maquina-sel"></span>
+            <button id="btnMejorarMaquina">⬆️ Mejorar (1🪵 1⚙️)</button>
+            <button id="btnAtacarCastillo" class="oculta">⚔️ Atacar Castillo Enemigo</button>
+            <button id="btnDispararCanon" class="oculta">💣 Disparar Cañón</button>
+            <button id="btnDeseleccionar">Deseleccionar</button>
+        </div>
+
+    </div>
+
+    <!-- REGISTRO DE EVENTOS (franja bajo la barra de botones) -->
+    <div id="log-panel">
+        <div id="log-titulo">Registro:</div>
+        <div id="log-contenido"></div>
+    </div>
+
+</div>
+
+<!-- ========================================== -->
+<!-- PANTALLA 3: FIN DE PARTIDA                 -->
+<!-- ========================================== -->
+<div id="pantalla-fin" class="pantalla oculta">
+    <div class="lobby-marco">
+        <h1 id="fin-titulo" class="titulo-pantalla-inicio">—</h1>
+        <button id="btnReiniciar" class="btn-principal">Jugar de nuevo 🔁</button>
+    </div>
+</div>
+
+<!-- ========================================== -->
+<!-- MODAL GENÉRICO (decisiones del jugador)    -->
+<!-- ========================================== -->
+<div id="modal-overlay" class="oculta">
+    <div id="modal-box">
+        <h3 id="modal-titulo"></h3>
+        <p id="modal-descripcion"></p>
+        <div id="modal-botones"></div>
+    </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
