@@ -1,0 +1,108 @@
+import { $, rivalDe, log } from './utils.js';
+import { NODOS_TABLERO } from './constants.js';
+import { gameState, maquinaSeleccionadaId, modoAccion, buscarMaquina } from './state.js';
+import { esCastillo, dueñoDeCastillo, sonConectados } from './board.js';
+import { renderTodo, dibujarConexionesSVG } from './render.js';
+import {
+    iniciarPartida, clicConquistaInicial, construirMaquina, activarModoExtractor,
+    intentarConstruirExtractor, construirCanon, mejorarCastillo, comerciar, cancelarModo,
+    seleccionarMaquina, intentarMover, iniciarAtaqueCastillo, mejorarMaquinaSeleccionada,
+    atacarCastilloConSeleccionada, activarModoDisparo, intentarDispararCanon, finalizarTurno
+} from './actions.js';
+
+function clicSeleccionarMaquina(numJ, id) {
+    if (gameState.fase !== 'juego' || gameState.turnoActual !== numJ) return;
+    seleccionarMaquina(maquinaSeleccionadaId === id ? null : id);
+    renderTodo();
+}
+
+async function clicNodo(nodoId) {
+    if (!gameState) return;
+    if (gameState.fase === 'conquistaInicial') { await clicConquistaInicial(nodoId); return; }
+    if (gameState.fase !== 'juego') return;
+
+    if (modoAccion === 'extractor') { await intentarConstruirExtractor(nodoId); return; }
+    if (modoAccion === 'disparo') { await intentarDispararCanon(nodoId); return; }
+
+    const numJ = gameState.turnoActual;
+    const casilla = gameState.tablero[nodoId];
+
+    if (casilla.ocupante && casilla.ocupante.jugador === numJ) {
+        clicSeleccionarMaquina(numJ, casilla.ocupante.maquinaId);
+        return;
+    }
+
+    if (!maquinaSeleccionadaId) return;
+    const maquina = buscarMaquina(numJ, maquinaSeleccionadaId);
+    if (!maquina) return;
+    await intentarMover(maquina, nodoId);
+}
+
+async function clicCastillo(castilloId) {
+    if (!gameState || gameState.fase !== 'juego') return;
+    const numJ = gameState.turnoActual;
+    const dueño = dueñoDeCastillo(castilloId);
+
+    if (modoAccion === 'disparo') { log('❌ El cañón solo puede apuntar a casillas de terreno.'); return; }
+    if (!maquinaSeleccionadaId) return;
+
+    const maquina = buscarMaquina(numJ, maquinaSeleccionadaId);
+    if (!maquina) return;
+
+    if (dueño === numJ) {
+        if (maquina.ubicacion === castilloId) return;
+        await intentarMover(maquina, castilloId);
+    } else {
+        if (maquina.accionRealizada) { log('🛑 Esa máquina ya actuó este turno.'); return; }
+        if (!sonConectados(maquina.ubicacion, castilloId)) { log('❌ Tu máquina no está en una casilla conectada a ese castillo.'); return; }
+        await iniciarAtaqueCastillo(maquina, numJ);
+    }
+}
+
+function clicSlotCastillo(numCastillo, indiceSlot) {
+    if (!gameState || gameState.fase !== 'juego') return;
+    const numJ = gameState.turnoActual;
+    if (numCastillo !== numJ) return;
+    const dentro = gameState.jugadores[numJ].maquinas.filter((m) => m.ubicacion === `castillo-p${numJ}`);
+    const maquina = dentro[indiceSlot - 1];
+    if (!maquina) return;
+    clicSeleccionarMaquina(numJ, maquina.id);
+}
+
+function inicializarEventos() {
+    $('btnIniciar').addEventListener('click', iniciarPartida);
+    $('btnReiniciar').addEventListener('click', () => {
+        $('pantalla-fin').classList.add('oculta');
+        iniciarPartida();
+    });
+
+    $('btnConstruirMG').addEventListener('click', () => construirMaquina(gameState.turnoActual));
+    $('btnConstruirExtractor').addEventListener('click', activarModoExtractor);
+    $('btnConstruirCanon').addEventListener('click', () => construirCanon(gameState.turnoActual));
+    $('btnMejorarCastillo').addEventListener('click', () => mejorarCastillo(gameState.turnoActual));
+    $('btnComerciar').addEventListener('click', () => comerciar(gameState.turnoActual));
+    $('btnCancelarModo').addEventListener('click', cancelarModo);
+    $('btnFinTurno').addEventListener('click', finalizarTurno);
+
+    $('btnMejorarMaquina').addEventListener('click', () => mejorarMaquinaSeleccionada());
+    $('btnAtacarCastillo').addEventListener('click', () => atacarCastilloConSeleccionada());
+    $('btnDispararCanon').addEventListener('click', activarModoDisparo);
+    $('btnDeseleccionar').addEventListener('click', () => { seleccionarMaquina(null); renderTodo(); });
+
+    NODOS_TABLERO.forEach((id) => {
+        const el = $(id);
+        if (el) el.addEventListener('click', () => clicNodo(id));
+    });
+    $('castillo-p1').addEventListener('click', () => clicCastillo('castillo-p1'));
+    $('castillo-p2').addEventListener('click', () => clicCastillo('castillo-p2'));
+    [1, 2].forEach((numCastillo) => {
+        [1, 2].forEach((slot) => {
+            const el = $(`castillo-p${numCastillo}-slot${slot}`);
+            if (el) el.addEventListener('click', (e) => { e.stopPropagation(); clicSlotCastillo(numCastillo, slot); });
+        });
+    });
+
+    dibujarConexionesSVG();
+}
+
+document.addEventListener('DOMContentLoaded', inicializarEventos);
