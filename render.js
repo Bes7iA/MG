@@ -54,7 +54,10 @@ export function renderPanel(numJ) {
     jugador.maquinas.forEach((m) => {
         const div = document.createElement('div');
         const inactiva = !esTurnoDeEste || m.accionRealizada || !m.puedeMoverse;
-        div.className = `tarjeta-maquina ${maquinaSeleccionadaId === m.id ? 'seleccionada' : ''} ${inactiva ? 'inactiva' : ''}`;
+        const esReparable = modoAccion === 'reparar' && m.hp < m.hpMax;
+        div.className = `tarjeta-maquina ${maquinaSeleccionadaId === m.id ? 'seleccionada' : ''} ${inactiva ? 'inactiva' : ''} ${esReparable ? 'reparable' : ''}`;
+        div.dataset.maquinaId = m.id;
+        div.dataset.jugador = numJ;
         const ubicTxt = esCastillo(m.ubicacion) ? 'En el castillo' : m.ubicacion;
         let estado = '';
         if (esTurnoDeEste) {
@@ -100,7 +103,7 @@ export function renderTablero() {
     NODOS_TABLERO.forEach((id) => {
         const casilla = gameState.tablero[id];
         const el = $(id);
-        el.classList.remove('terreno-p1', 'terreno-p2', 'nodo-accesible', 'nodo-objetivo', 'nodo-mg-seleccionada');
+        el.classList.remove('terreno-p1', 'terreno-p2', 'nodo-accesible', 'nodo-objetivo', 'nodo-mg-seleccionada', 'nodo-reparable');
         let html = '';
         if (!casilla.revelado) {
             html = `<div class="carta-terreno-wrap">
@@ -156,6 +159,16 @@ export function renderTablero() {
         NODOS_TABLERO.forEach((id) => {
             const c = gameState.tablero[id];
             if (c.dueno === numJ && !c.extractor) $(id).classList.add('nodo-accesible');
+        });
+    }
+    if (modoAccion === 'reparar') {
+        const numJ = gameState.turnoActual;
+        NODOS_TABLERO.forEach((id) => {
+            const casilla = gameState.tablero[id];
+            if (casilla.ocupante && casilla.ocupante.jugador === numJ) {
+                const m = buscarMaquina(numJ, casilla.ocupante.maquinaId);
+                if (m && m.hp < m.hpMax) $(id).classList.add('nodo-reparable');
+            }
         });
     }
 }

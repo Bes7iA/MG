@@ -7,7 +7,8 @@ import {
     iniciarPartida, clicConquistaInicial, construirMaquina, activarModoExtractor,
     intentarConstruirExtractor, construirCanon, mejorarCastillo, comerciar, cancelarModo,
     seleccionarMaquina, intentarMover, iniciarAtaqueCastillo, mejorarMaquinaSeleccionada,
-    atacarCastilloConSeleccionada, activarModoDisparo, intentarDispararCanon, finalizarTurno
+    atacarCastilloConSeleccionada, activarModoDisparo, intentarDispararCanon, finalizarTurno,
+    repararMaquina
 } from './actions.js';
 
 function clicSeleccionarMaquina(numJ, id) {
@@ -20,7 +21,15 @@ async function clicNodo(nodoId) {
     if (!gameState) return;
     if (gameState.fase === 'conquistaInicial') { await clicConquistaInicial(nodoId); return; }
     if (gameState.fase !== 'juego') return;
-
+    if (modoAccion === 'reparar') {
+        const numJ = gameState.turnoActual;
+        const casilla = gameState.tablero[nodoId];
+        if (casilla.ocupante && casilla.ocupante.jugador === numJ) {
+            const maquina = buscarMaquina(numJ, casilla.ocupante.maquinaId);
+            if (maquina && maquina.hp < maquina.hpMax) repararMaquina(maquina);
+        }
+        return;
+    }
     if (modoAccion === 'extractor') { await intentarConstruirExtractor(nodoId); return; }
     if (modoAccion === 'disparo') { await intentarDispararCanon(nodoId); return; }
 
@@ -100,6 +109,20 @@ function inicializarEventos() {
             const el = $(`castillo-p${numCastillo}-slot${slot}`);
             if (el) el.addEventListener('click', (e) => { e.stopPropagation(); clicSlotCastillo(numCastillo, slot); });
         });
+    });
+    [1, 2].forEach((numJ) => {
+        const lista = $(`p${numJ}-maquinas`);
+        if (lista) {
+            lista.addEventListener('click', (e) => {
+                if (modoAccion !== 'reparar') return;
+                const tarjeta = e.target.closest('.tarjeta-maquina');
+                if (!tarjeta || !tarjeta.classList.contains('reparable')) return;
+                const id = Number(tarjeta.dataset.maquinaId);
+                const jug = Number(tarjeta.dataset.jugador);
+                const maquina = buscarMaquina(jug, id);
+                if (maquina) repararMaquina(maquina);
+            });
+        }
     });
 
     dibujarConexionesSVG();

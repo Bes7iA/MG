@@ -12,6 +12,105 @@ import { rollD4, roll2D4, resolverCombate, destruirMaquina } from './combat.js';
 import { preguntar, elegirRecurso } from './ui-modal.js';
 import { renderTodo, mostrarPantallaFin } from './render.js';
 
+function nombreColor(numJ) {
+    return numJ === 1
+        ? '<span class="color-rojo">Jugador Rojo</span>'
+        : '<span class="color-azul">Jugador Azul</span>';
+}
+
+async function mostrarAvisoTurnoConquista(numJ) {
+    await preguntar(
+        `${numJ === 1 ? '🔴' : '🔵'} Elige tu terreno inicial`,
+        `${nombreColor(numJ)} debe elegir una casilla conectada a su castillo para reclamarla como su terreno inicial.`,
+        [{ label: 'Continuar', value: true, destacado: true }],
+        true
+    );
+}
+
+async function finalizarConquistaInicial() {
+    const primerJugador = Math.random() < 0.5 ? 1 : 2;
+    gameState.primerJugador = primerJugador;
+
+    await preguntar(
+        '🪙 Lanzamiento de moneda',
+        `Ambos jugadores reclamaron su terreno inicial. Se ha lanzado una moneda para decidir quién comienza el juego.<br><br>${nombreColor(primerJugador)} ha ganado y puede iniciar la partida ahora.`,
+        [{ label: 'Continuar', value: true, destacado: true }],
+        true
+    );
+
+    gameState.fase = 'juego';
+    gameState.turnoActual = primerJugador;
+    log(`⚔️ ¡Conquista inicial completada! Comienza la partida. Turno de Jugador ${primerJugador}.`);
+    renderTodo();
+    await iniciarTurno();
+}
+
+async function mostrarAvisoDado(numJ, resultado) {
+    if (resultado === 'martillo') {
+        const eleccion = await preguntar(
+            '🔨 Bonus de turno: Martillo',
+            `${nombreColor(numJ)} — ¿cómo quieres usar tu bonificación este turno?`,
+            [
+                { label: '🛠️ Construir de inmediato', value: 'construir', destacado: true },
+                { label: '❤️ Reparar máquina', value: 'reparar' }
+            ],
+            false
+        );
+
+        if (eleccion === 'reparar') {
+            await activarReparacionMartillo(numJ);
+        }
+        return;
+    }
+
+    const info = {
+        rayo: { emoji: '🌩️', nombre: 'Rayo', desc: '+1 de cada recurso del que tengas al menos un terreno conquistado.' },
+        flecha: { emoji: '🏹', nombre: 'Flecha', desc: 'Tus máquinas pueden moverse 1 casilla gratis este turno (conquistar sigue costando).' }
+    }[resultado];
+
+    await preguntar(
+        `${info.emoji} Bonus de turno: ${info.nombre}`,
+        `${nombreColor(numJ)} — ${info.desc}`,
+        [{ label: 'Continuar', value: true, destacado: true }],
+        false
+    );
+}
+
+function hayMaquinasReparables(numJ) {
+    return gameState.jugadores[numJ].maquinas.some((m) => m.hp < m.hpMax);
+}
+
+async function activarReparacionMartillo(numJ) {
+    if (!hayMaquinasReparables(numJ)) {
+        gameState.flags.martilloDisponible = false;
+        await preguntar(
+            '❤️ Sin máquinas disponibles',
+            'No hay máquinas disponibles para recibir reparación. Has desperdiciado tu bonificación de este turno.',
+            [{ label: 'Continuar', value: true, destacado: true }],
+            false
+        );
+        return;
+    }
+
+    await preguntar(
+        '❤️ Reparar máquina',
+        'Haz clic sobre la máquina de guerra que deseas reparar (resaltada en verde).',
+        [{ label: 'Entendido', value: true, destacado: true }],
+        false
+    );
+
+    setModoAccion('reparar');
+    renderTodo();
+}
+
+export function repararMaquina(maquina) {
+    maquina.hp = Math.min(maquina.hpMax, maquina.hp + 1);
+    gameState.flags.martilloDisponible = false;
+    setModoAccion(null);
+    log(`❤️ Se reparó 1 HP a la máquina #${maquina.id} de Jugador ${maquina.jugador} (HP: ${maquina.hp}/${maquina.hpMax}).`);
+    renderTodo();
+}
+
 export async function iniciarPartida() {
     $('pantalla-inicio').classList.add('oculta');
     $('pantalla-fin').classList.add('oculta');
@@ -31,16 +130,19 @@ export async function iniciarPartida() {
 
     renderTodo();
 
-    const primerJugador = Math.random() < 0.5 ? 1 : 2;
-    gameState.primerJugador = primerJugador;
-    await preguntar('🪙 Lanzamiento de moneda',
-        `¡${primerJugador === 1 ? 'Jugador 1 (Rojo)' : 'Jugador 2 (Azul)'} gana el lanzamiento y comienza la partida!`,
-        [{ label: 'Continuar', value: true, destacado: true }]);
+    await preguntar(
+        '🎲 Tablero preparado',
+        `El tablero está listo para comenzar. En esta partida, ambos jugadores reciben +1 de ${NOMBRE[sobrante]} extra para empezar.`,
+        [{ label: 'Continuar', value: true, destacado: true }],
+        true
+    );
 
     gameState.fase = 'conquistaInicial';
-    gameState.conquistaInicial = { orden: [primerJugador, rivalDe(primerJugador)], indice: 0 };
-    log(`Comienza la Conquista Inicial. Turno de Jugador ${primerJugador}.`);
+    gameState.conquistaInicial = { orden: [1, 2], indice: 0 };
+    log('Comienza la Conquista Inicial. Turno de Jugador 1.');
     renderTodo();
+
+    await mostrarAvisoTurnoConquista(1);
 }
 
 export async function clicConquistaInicial(nodoId) {
@@ -68,14 +170,13 @@ export async function clicConquistaInicial(nodoId) {
     if (ubicacion === nodoId) casilla.ocupante = { jugador: numJ, maquinaId: maquina.id };
 
     gameState.conquistaInicial.indice += 1;
+    renderTodo();
+
     if (gameState.conquistaInicial.indice >= gameState.conquistaInicial.orden.length) {
-        gameState.fase = 'juego';
-        gameState.turnoActual = gameState.primerJugador;
-        log('⚔️ ¡Conquista inicial completada! Comienza la partida.');
-        renderTodo();
-        await iniciarTurno();
+        await finalizarConquistaInicial();
     } else {
-        renderTodo();
+        const siguienteJ = gameState.conquistaInicial.orden[gameState.conquistaInicial.indice];
+        await mostrarAvisoTurnoConquista(siguienteJ);
     }
 }
 
@@ -116,6 +217,7 @@ export async function iniciarTurno() {
     }
 
     renderTodo();
+    await mostrarAvisoDado(numJ, resultado);
 }
 
 export async function finalizarTurno() {

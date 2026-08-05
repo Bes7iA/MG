@@ -16,7 +16,7 @@
     --carbon: #4a4a4a;
     --hierro: #8a9ba8;
     --texto: #ece3d8;
-    --texto-tenue: #a89a8c;
+    --texto-tenue: #ffffff;
     --exito: #6fae5a;
     --peligro: #c94f3f;
     font-family: 'IBM Plex Sans', sans-serif;
@@ -273,11 +273,14 @@ h1, h2, h3, .titulo-juego, .indicador-turno-box {
 .terreno-p1 { outline: 3px solid var(--p1); outline-offset: -2px; }
 .terreno-p2 { outline: 3px solid var(--p2); outline-offset: -2px; }
 
-.nodo-accesible { outline: 3px solid #00e5c8 !important; animation: pulso-brillante 0.9s infinite alternate ease-in-out; z-index: 7; }
-@keyframes pulso-brillante {
-    from { box-shadow: 0 0 6px #00e5c8; }
-    to   { box-shadow: 0 0 18px #00e5c8, 0 0 28px #00e5c8; }
+.nodo-reparable { outline: 3px solid #2ecc71 !important; animation: pulso-brillante-verde 0.9s infinite alternate ease-in-out; z-index: 7; }
+@keyframes pulso-brillante-verde {
+    from { box-shadow: 0 0 6px #2ecc71; }
+    to   { box-shadow: 0 0 18px #2ecc71, 0 0 28px #2ecc71; }
 }
+
+.tarjeta-maquina.reparable { border-color: #71ff00; box-shadow: 0 0 10px rgb(61 159 37); cursor: pointer; }
+
 .nodo-objetivo { outline: 3px solid #f1c40f !important; animation: pulso-brillante-amarillo .9s infinite alternate ease-in-out; z-index: 7; }
 @keyframes pulso-brillante-amarillo {
     from { box-shadow: 0 0 6px #f1c40f; }
@@ -396,11 +399,11 @@ h1, h2, h3, .titulo-juego, .indicador-turno-box {
 }
 #modal-box {
     background: var(--panel); border: 2px solid var(--ember); border-radius: 12px;
-    padding: 26px 28px; max-width: 460px; width: 90%;
+    padding: 32px 34px; max-width: 560px; width: 90%;
     box-shadow: 0 20px 50px rgba(0,0,0,.6);
 }
-#modal-titulo { font-size: 1.15rem; margin-bottom: 10px; color: var(--ember-bright); }
-#modal-descripcion { color: var(--texto-tenue); font-size: 0.9rem; margin-bottom: 18px; line-height: 1.5; white-space: pre-line; }
+#modal-titulo { font-size: 1.5rem; margin-bottom: 14px; color: var(--ember-bright); }
+#modal-descripcion { color: var(--texto-tenue); font-size: 1.1rem; margin-bottom: 22px; line-height: 1.6; white-space: pre-line; }
 #modal-botones { display: flex; flex-wrap: wrap; gap: 10px; }
 #modal-botones button {
     flex: 1; min-width: 120px;
@@ -417,4 +420,13 @@ h1, h2, h3, .titulo-juego, .indicador-turno-box {
     .panel-jugador { width: 100%; max-height: 160px; }
     #tablero-contenedor { width: 100%; }
     #log-panel { position: static; width: 100%; margin-top: 8px; }
+}
+
+.color-rojo { color: var(--p1); font-weight: 700; }
+.color-azul { color: var(--p2); font-weight: 700; }
+
+.nodo-accesible { outline: 3px solid #00e5c8 !important; animation: pulso-brillante 0.9s infinite alternate ease-in-out; z-index: 7; }
+@keyframes pulso-brillante {
+    from { box-shadow: 0 0 6px #00e5c8; }
+    to   { box-shadow: 0 0 18px #8af8ea, 0 0 28px #00e6c5; }
 }
