@@ -27,7 +27,8 @@ export function crearEstadoInicial() {
         flags: { flechaDisponible: false, martilloDisponible: false },
         jugadores: { 1: crearJugador(1), 2: crearJugador(2) },
         tablero: {},
-        conquistaInicial: { orden: [], indice: 0 }
+        conquistaInicial: { orden: [], indice: 0 },
+        primeraProduccionHecha: false
     };
 }
 

@@ -196,7 +196,12 @@ export async function iniciarTurno() {
     jugador.maquinas.forEach((m) => { m.movimientoGratisUsado = false; });
 
     recalcularProduccion(numJ);
-    RECURSOS.forEach((r) => { jugador.recursos[r] += jugador.produccion[r]; });
+    if (gameState.primeraProduccionHecha) {
+        RECURSOS.forEach((r) => { jugador.recursos[r] += jugador.produccion[r]; });
+    } else {
+        gameState.primeraProduccionHecha = true;
+        log(`ℹ️ Jugador ${numJ} no recibe producción de terrenos en el primer turno de la partida.`);
+    }
 
     const opciones = ['rayo', 'flecha', 'martillo'];
     const resultado = opciones[Math.floor(Math.random() * 3)];
@@ -248,6 +253,16 @@ export async function construirMaquina(numJ) {
     const jugador = gameState.jugadores[numJ];
     if (jugador.accionesTurno.mgConstruida) { log('🛑 Ya construiste una máquina de guerra este turno.'); return; }
     if (contarMaquinasEnCastillo(numJ) >= 2) { log('🛑 El castillo ya tiene 2 máquinas esperando. Muévelas antes de construir otra.'); return; }
+    if (jugador.maquinas.length >= jugador.castillo.limiteMG) {
+        log(`🛑 Ya tienes el máximo de ${jugador.castillo.limiteMG} máquinas permitidas.`);
+        await preguntar(
+            '🛑 Límite de ejército alcanzado',
+            `Ya tienes el máximo de ${jugador.castillo.limiteMG} máquinas de guerra permitidas con tu nivel de castillo actual. Mejora tu castillo para aumentar este límite.`,
+            [{ label: 'Entendido', value: true, destacado: true }],
+            false
+        );
+        return;
+    }
     if (!tienePago(numJ, COSTOS.maquina)) { log(`❌ Recursos insuficientes (necesitas ${costoTexto(COSTOS.maquina)}).`); return; }
 
     pagar(numJ, COSTOS.maquina);
@@ -382,7 +397,16 @@ export async function intentarMover(maquina, destinoId) {
     if (destino.ocupante && destino.ocupante.jugador === numJ) { log('❌ Esa casilla ya está ocupada por otra de tus máquinas.'); return; }
 
     if (!destino.revelado) {
-        if (jugador.recursos.carbon < COSTOS.conquistaNueva.carbon) { log('❌ Necesitas 1 de Carbón para conquistar terreno nuevo.'); return; }
+        if (jugador.recursos.carbon < COSTOS.conquistaNueva.carbon) {
+            log('❌ Necesitas 1 de Carbón para conquistar terreno nuevo.');
+            await preguntar(
+                '❌ Recursos insuficientes',
+                'No tienes el carbón necesario para moverte a este espacio y conquistarlo.',
+                [{ label: 'Entendido', value: true, destacado: true }],
+                false
+            );
+            return;
+        }
         jugador.recursos.carbon -= COSTOS.conquistaNueva.carbon;
         destino.revelado = true;
         destino.dueno = numJ;
@@ -397,15 +421,22 @@ export async function intentarMover(maquina, destinoId) {
 
     if (destino.dueno === numJ) {
         let recursoUsado = null;
+        let gratisPorFlecha = false;
         if (!origenEsCastillo) {
-            recursoUsado = await elegirRecurso(numJ, 'Mover', 'Elige con qué recurso pagas el movimiento (1).');
-            if (!recursoUsado) return;
-            jugador.recursos[recursoUsado] -= 1;
+            if (gameState.flags.flechaDisponible && !maquina.movimientoGratisUsado) {
+                gratisPorFlecha = true;
+                maquina.movimientoGratisUsado = true;
+            } else {
+                recursoUsado = await elegirRecurso(numJ, 'Mover', 'Elige con qué recurso pagas el movimiento (1).');
+                if (!recursoUsado) return;
+                jugador.recursos[recursoUsado] -= 1;
+            }
         }
         liberarCasilla(maquina);
         maquina.ubicacion = destinoId;
         destino.ocupante = { jugador: numJ, maquinaId: maquina.id };
-        log(`🚶 Jugador ${numJ} mueve una máquina a ${destinoId}${origenEsCastillo ? ' (salida del castillo, gratis)' : ` (pagó 1 ${NOMBRE[recursoUsado]})`}.`);
+        const motivo = origenEsCastillo ? ' (salida del castillo, gratis)' : gratisPorFlecha ? ' (🏹 movimiento gratis por Flecha)' : ` (pagó 1 ${NOMBRE[recursoUsado]})`;
+        log(`🚶 Jugador ${numJ} mueve una máquina a ${destinoId}${motivo}.`);
         renderTodo();
         return;
     }
@@ -421,15 +452,22 @@ export async function intentarMover(maquina, destinoId) {
 
     if (accion === 'pasar') {
         let recursoUsado = null;
+        let gratisPorFlecha = false;
         if (!origenEsCastillo) {
-            recursoUsado = await elegirRecurso(numJ, 'Mover', 'Elige con qué recurso pagas el movimiento (1).');
-            if (!recursoUsado) return;
-            jugador.recursos[recursoUsado] -= 1;
+            if (gameState.flags.flechaDisponible && !maquina.movimientoGratisUsado) {
+                gratisPorFlecha = true;
+                maquina.movimientoGratisUsado = true;
+            } else {
+                recursoUsado = await elegirRecurso(numJ, 'Mover', 'Elige con qué recurso pagas el movimiento (1).');
+                if (!recursoUsado) return;
+                jugador.recursos[recursoUsado] -= 1;
+            }
         }
         liberarCasilla(maquina);
         maquina.ubicacion = destinoId;
         destino.ocupante = { jugador: numJ, maquinaId: maquina.id };
-        log(`🚶 Jugador ${numJ} pasa por ${destinoId} sin conquistar${origenEsCastillo ? ' (salida del castillo, gratis)' : ` (pagó 1 ${NOMBRE[recursoUsado]})`}.`);
+        const motivo = origenEsCastillo ? ' (salida del castillo, gratis)' : gratisPorFlecha ? ' (🏹 movimiento gratis por Flecha)' : ` (pagó 1 ${NOMBRE[recursoUsado]})`;
+        log(`🚶 Jugador ${numJ} pasa por ${destinoId} sin conquistar${motivo}.`);
         renderTodo();
         return;
     }
@@ -458,7 +496,7 @@ export async function intentarCombateOEntrada(atacante, destinoId) {
     const resultado = await resolverCombate(atacante, defensor, true);
     atacante.accionRealizada = true;
 
-    if (resultado === 'atacanteGana') {
+    if (resultado === 'atacanteGana' || resultado === 'defensorRetira') {
         const dueño = destino.dueno;
         if (dueño !== null && dueño !== atacante.jugador) {
             const costoConquista = destino.extractor ? COSTOS.conquistaEnemigaExtractor : COSTOS.conquistaEnemigaBase;
@@ -467,7 +505,8 @@ export async function intentarCombateOEntrada(atacante, destinoId) {
                 { label: '🚶 Solo ocupar (sin conquistar)', value: 'pasar' },
                 { label: `🏳️ Conquistar terreno (${costoConquista}⬛)`, value: 'conquistar', disabled: jugador.recursos.carbon < costoConquista },
             ];
-            const accion = await preguntar('Máquina destruida', `Venciste al enemigo en ${destinoId}. ¿Conquistas también el terreno?`, opciones);
+            const tituloModal = resultado === 'atacanteGana' ? 'Máquina destruida' : 'Enemigo repelido';
+            const accion = await preguntar(tituloModal, `Ganaste el combate en ${destinoId}. ¿Conquistas también el terreno?`, opciones);
             if (accion === 'conquistar') {
                 jugador.recursos.carbon -= costoConquista;
                 destino.dueno = atacante.jugador;

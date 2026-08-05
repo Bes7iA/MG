@@ -178,7 +178,7 @@ export function renderBotonesInferiores() {
     const numJ = gameState.turnoActual;
     const jugador = enJuego ? gameState.jugadores[numJ] : null;
 
-    $('btnConstruirMG').disabled = !enJuego || jugador.accionesTurno.mgConstruida || contarMaquinasEnCastillo(numJ) >= 2 || !tienePago(numJ, COSTOS.maquina);
+    $('btnConstruirMG').disabled = !enJuego || jugador.accionesTurno.mgConstruida || contarMaquinasEnCastillo(numJ) >= 2 || !tienePago(numJ, COSTOS.maquina) || jugador.maquinas.length >= jugador.castillo.limiteMG;
     $('btnConstruirExtractor').disabled = !enJuego || jugador.accionesTurno.extractorConstruido || contarExtractores(numJ) >= 3 || !tienePago(numJ, COSTOS.extractor);
     $('btnConstruirCanon').disabled = !enJuego || jugador.castillo.canon || !tienePago(numJ, COSTOS.canon);
     $('btnMejorarCastillo').disabled = !enJuego || jugador.castillo.mejoras >= 5 || !tienePago(numJ, COSTOS.mejoraCastillo);
