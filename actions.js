@@ -283,8 +283,8 @@ export function activarModoExtractor() {
     if (jugador.accionesTurno.extractorConstruido) { log('🛑 Ya construiste un extractor este turno.'); return; }
     if (contarExtractores(numJ) >= 3) { log('🛑 Ya tienes el máximo de 3 extractores.'); return; }
     if (!tienePago(numJ, COSTOS.extractor)) { log(`❌ Recursos insuficientes (necesitas ${costoTexto(COSTOS.extractor)}).`); return; }
-    setModoAccion(modoAccion === 'extractor' ? null : 'extractor');
     seleccionarMaquina(null);
+    setModoAccion(modoAccion === 'extractor' ? null : 'extractor');
     renderTodo();
 }
 
@@ -295,6 +295,17 @@ export async function intentarConstruirExtractor(nodoId) {
     if (casilla.dueno !== numJ) { log('❌ Solo puedes construir un extractor sobre terreno propio.'); return; }
     if (casilla.extractor) { log('❌ Esa casilla ya tiene un extractor.'); return; }
     if (!tienePago(numJ, COSTOS.extractor)) { log(`❌ Recursos insuficientes (necesitas ${costoTexto(COSTOS.extractor)}).`); return; }
+
+    const confirmado = await preguntar(
+        '⛏️ Construir Extractor',
+        `Construirás un extractor de ${NOMBRE[casilla.tipo]}. Solo puedes tener 3 como máximo. Este extractor aumentará el ${NOMBRE[casilla.tipo]} que recibes al inicio de cada turno mientras controles este terreno.`,
+        [
+            { label: 'Construir', value: true, destacado: true },
+            { label: 'Cancelar', value: false }
+        ],
+        false
+    );
+    if (!confirmado) { setModoAccion(null); renderTodo(); return; }
 
     pagar(numJ, COSTOS.extractor);
     casilla.extractor = true;

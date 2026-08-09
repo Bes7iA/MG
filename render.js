@@ -177,9 +177,10 @@ export function renderBotonesInferiores() {
     const enJuego = gameState.fase === 'juego';
     const numJ = gameState.turnoActual;
     const jugador = enJuego ? gameState.jugadores[numJ] : null;
+    const hayTerrenoParaExtractor = enJuego && Object.values(gameState.tablero).some((c) => c.dueno === numJ && !c.extractor);
 
     $('btnConstruirMG').disabled = !enJuego || jugador.accionesTurno.mgConstruida || contarMaquinasEnCastillo(numJ) >= 2 || !tienePago(numJ, COSTOS.maquina) || jugador.maquinas.length >= jugador.castillo.limiteMG;
-    $('btnConstruirExtractor').disabled = !enJuego || jugador.accionesTurno.extractorConstruido || contarExtractores(numJ) >= 3 || !tienePago(numJ, COSTOS.extractor);
+    $('btnConstruirExtractor').disabled = !enJuego || jugador.accionesTurno.extractorConstruido || contarExtractores(numJ) >= 3 || !tienePago(numJ, COSTOS.extractor) || !hayTerrenoParaExtractor;
     $('btnConstruirCanon').disabled = !enJuego || jugador.castillo.canon || !tienePago(numJ, COSTOS.canon);
     $('btnMejorarCastillo').disabled = !enJuego || jugador.castillo.mejoras >= 5 || !tienePago(numJ, COSTOS.mejoraCastillo);
     $('btnComerciar').disabled = !enJuego;
