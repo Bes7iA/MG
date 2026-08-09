@@ -8,16 +8,16 @@
     --panel-border: #3a2f26;
     --ember: #d9773f;
     --ember-bright: #f0975f;
-    --p1: #e0463f;
+    --p1: #ff332c;
     --p1-glow: rgba(224, 70, 63, 0.55);
-    --p2: #3f8fe0;
+    --p2: #3399ff;
     --p2-glow: rgba(63, 143, 224, 0.55);
     --madera: #a97845;
     --carbon: #4a4a4a;
     --hierro: #8a9ba8;
     --texto: #ece3d8;
     --texto-tenue: #ffffff;
-    --exito: #6fae5a;
+    --exito: #5cff2b;
     --peligro: #c94f3f;
     font-family: 'IBM Plex Sans', sans-serif;
 }
@@ -238,12 +238,10 @@ h1, h2, h3, .titulo-juego, .indicador-turno-box {
 
 #imagen-tablero { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; opacity: 1; }
 #conexiones-svg { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; }
-#conexiones-svg line { stroke: #5a4a3a; stroke-width: 0.35; }
+#conexiones-svg line { stroke: #655132; stroke-width: 0.5; }
 
 .nodo-terreno {
     position: absolute;
-    width: 6.6%;
-    height: 11.6%;
     display: flex; justify-content: center; align-items: center;
     cursor: pointer;
     z-index: 2;
@@ -251,7 +249,7 @@ h1, h2, h3, .titulo-juego, .indicador-turno-box {
     background: #1c1611;
     border: 1px solid #3a2f26;
     transition: transform 0.12s ease, outline-color .15s;
-    overflow: hidden;
+    overflow: visible;
 }
 .nodo-terreno:hover { transform: scale(1.08); z-index: 6; }
 
@@ -287,7 +285,21 @@ h1, h2, h3, .titulo-juego, .indicador-turno-box {
     to   { box-shadow: 0 0 18px #f1c40f, 0 0 28px #f1c40f; }
 }
 
-.icono-extractor { position: absolute; top: 1px; right: 2px; font-size: 0.7rem; filter: drop-shadow(0 0 2px #000); }
+.icono-extractor {
+    position: absolute;
+    top: 20%;
+    left: 90%;
+    transform: translate(-50%, -50%);
+    width: 130%; height: 130%; object-fit: contain;
+    z-index: 20;
+}
+.icono-extractor-fallback {
+    position: absolute; inset: 0; margin: auto;
+    width: fit-content; height: fit-content;
+    font-size: 1.4rem;
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,.8));
+    z-index: 5;
+}
 
 .ficha-mg {
     position: absolute; inset: 0;
@@ -295,11 +307,11 @@ h1, h2, h3, .titulo-juego, .indicador-turno-box {
     pointer-events: none;
     z-index: 8;
 }
-.ficha-mg .img-mg { width: 60%; height: 60%; object-fit: contain; filter: drop-shadow(0 1px 2px rgba(0,0,0,.8)); }
+.ficha-mg .img-mg { width: 90%; height: 90%; object-fit: contain; filter: drop-shadow(0 1px 2px rgba(0,0,0,.8)); }
 .ficha-mg .icono-mg { font-size: 1.3rem; filter: drop-shadow(0 1px 2px rgba(0,0,0,.8)); }
 .ficha-mg.mg-p1 .icono-mg { color: var(--p1); }
 .ficha-mg.mg-p2 .icono-mg { color: var(--p2); }
-.ficha-mg .hp-mini { width: 70%; height: 5px; background: rgba(0,0,0,.6); border-radius: 3px; overflow: hidden; margin-top: 2px; }
+.ficha-mg .hp-mini { width: 70%; height: 5px; background: rgb(255 0 0 / 0.6); border-radius: 3px; overflow: hidden; margin-top: 2px; }
 .ficha-mg .hp-mini .relleno { height: 100%; background: var(--exito); }
 
 .nodo-mg-seleccionada { outline: 3px solid #f1c40f !important; z-index: 9; animation: pulso-brillante-amarillo .9s infinite alternate ease-in-out; }
@@ -308,8 +320,6 @@ h1, h2, h3, .titulo-juego, .indicador-turno-box {
 /* CASTILLOS */
 .zona-castillo {
     position: absolute;
-    width: 10.5%;
-    height: 30%;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     gap: 4px;
     z-index: 3;
@@ -320,8 +330,7 @@ h1, h2, h3, .titulo-juego, .indicador-turno-box {
 }
 .castillo-rojo { border: 2px solid var(--p1); box-shadow: 0 0 14px var(--p1-glow); }
 .castillo-azul { border: 2px solid var(--p2); box-shadow: 0 0 14px var(--p2-glow); }
-.castillo-rojo { top: 27%; left: 3.5%; }
-.castillo-azul { top: 27%; left: 86%; }
+
 
 .slots-castillo { display: flex; gap: 5px; width: 100%; height: 55%; }
 .slot-castillo {
@@ -344,26 +353,7 @@ h1, h2, h3, .titulo-juego, .indicador-turno-box {
 .slot-canon.canon-inactivo { opacity: 0.5; cursor: default; }
 .slot-canon.canon-seleccionado { outline: 3px solid #f1c40f; border-radius: 6px; box-shadow: 0 0 10px rgba(241,196,15,0.6); }
 
-/* FILA 1 */
-#nodo-1 { top: 8.5%; left: 8.5%; } #nodo-2 { top: 8.5%; left: 19%; }
-#nodo-3 { top: 8.5%; left: 29.5%; } #nodo-4 { top: 8.5%; left: 39%; }
-#nodo-5 { top: 8.5%; left: 55%; } #nodo-6 { top: 8.5%; left: 65.5%; }
-#nodo-7 { top: 8.5%; left: 75%; } #nodo-8 { top: 8.5%; left: 85.5%; }
-/* FILA 2 */
-#nodo-9 { top: 26%; left: 28%; } #nodo-10 { top: 26%; left: 41%; }
-#nodo-11 { top: 26%; left: 52.5%; } #nodo-12 { top: 26%; left: 65%; }
-/* FILA 3 */
-#nodo-13 { top: 44%; left: 20.5%; } #nodo-14 { top: 44%; left: 35.5%; }
-#nodo-15 { top: 44%; left: 46.5%; } #nodo-16 { top: 44%; left: 57%; }
-#nodo-17 { top: 44%; left: 72%; }
-/* FILA 4 */
-#nodo-18 { top: 61.5%; left: 28%; } #nodo-19 { top: 61.5%; left: 41%; }
-#nodo-20 { top: 61.5%; left: 52.5%; } #nodo-21 { top: 61.5%; left: 65%; }
-/* FILA 5 */
-#nodo-22 { top: 79%; left: 8.5%; } #nodo-23 { top: 79%; left: 19%; }
-#nodo-24 { top: 79%; left: 29.5%; } #nodo-25 { top: 79%; left: 39%; }
-#nodo-26 { top: 79%; left: 55%; } #nodo-27 { top: 79%; left: 65.5%; }
-#nodo-28 { top: 79%; left: 75%; } #nodo-29 { top: 79%; left: 85.5%; }
+
 
 /* BARRA INFERIOR (+50% de tamaño) */
 .barra-inferior {

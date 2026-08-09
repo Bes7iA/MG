@@ -47,24 +47,30 @@ export const CONEXIONES_TABLERO = {
 // Posiciones (%) usadas SOLO para calcular los centros de las líneas de conexión del SVG.
 // Deben coincidir con las reglas de estilos.css.
 export const POSICIONES = {
-    'castillo-p1': { top: 27, left: 3.5, w: 10.5, h: 30 },
-    'castillo-p2': { top: 27, left: 86, w: 10.5, h: 30 },
-    'nodo-1': { top: 8.5, left: 8.5, w: 6.6, h: 11.6 }, 'nodo-2': { top: 8.5, left: 19, w: 6.6, h: 11.6 },
-    'nodo-3': { top: 8.5, left: 29.5, w: 6.6, h: 11.6 }, 'nodo-4': { top: 8.5, left: 39, w: 6.6, h: 11.6 },
-    'nodo-5': { top: 8.5, left: 55, w: 6.6, h: 11.6 }, 'nodo-6': { top: 8.5, left: 65.5, w: 6.6, h: 11.6 },
-    'nodo-7': { top: 8.5, left: 75, w: 6.6, h: 11.6 }, 'nodo-8': { top: 8.5, left: 85.5, w: 6.6, h: 11.6 },
+    'castillo-p1': { top: 28.5, left: 5.5, w: 12, h: 40 },
+    'castillo-p2': { top: 28.5, left: 82.5, w: 12, h: 40 },
+
+    'nodo-1': { top: 8.5, left: 8.2, w: 6.6, h: 11.6 }, 'nodo-2': { top: 8.5, left: 18.2, w: 6.6, h: 11.6 },
+    'nodo-3': { top: 8.5, left: 28.2, w: 6.6, h: 11.6 }, 'nodo-4': { top: 8.5, left: 38.2, w: 6.6, h: 11.6 },
+    'nodo-5': { top: 8.5, left: 55.2, w: 6.6, h: 11.6 }, 'nodo-6': { top: 8.5, left: 65.2, w: 6.6, h: 11.6 },
+    'nodo-7': { top: 8.5, left: 75.2, w: 6.6, h: 11.6 }, 'nodo-8': { top: 8.5, left: 85.2, w: 6.6, h: 11.6 },
+
     'nodo-9': { top: 26, left: 28, w: 6.6, h: 11.6 }, 'nodo-10': { top: 26, left: 41, w: 6.6, h: 11.6 },
-    'nodo-11': { top: 26, left: 52.5, w: 6.6, h: 11.6 }, 'nodo-12': { top: 26, left: 65, w: 6.6, h: 11.6 },
-    'nodo-13': { top: 44, left: 20.5, w: 6.6, h: 11.6 }, 'nodo-14': { top: 44, left: 35.5, w: 6.6, h: 11.6 },
-    'nodo-15': { top: 44, left: 46.5, w: 6.6, h: 11.6 }, 'nodo-16': { top: 44, left: 57, w: 6.6, h: 11.6 },
-    'nodo-17': { top: 44, left: 72, w: 6.6, h: 11.6 },
+    'nodo-11': { top: 26, left: 52.4, w: 6.6, h: 11.6 }, 'nodo-12': { top: 26, left: 65.4, w: 6.6, h: 11.6 },
+
+    'nodo-13': { top: 42.7, left: 20.5, w: 6.6, h: 11.6 }, 'nodo-14': { top: 42.7, left: 35.5, w: 6.6, h: 11.6 },
+    'nodo-15': { top: 42.7, left: 46.7, w: 6.6, h: 11.6 }, 'nodo-16': { top: 42.7, left: 57.9, w: 6.6, h: 11.6 },
+    'nodo-17': { top: 42.7, left: 72.9, w: 6.6, h: 11.6 },
+
     'nodo-18': { top: 61.5, left: 28, w: 6.6, h: 11.6 }, 'nodo-19': { top: 61.5, left: 41, w: 6.6, h: 11.6 },
-    'nodo-20': { top: 61.5, left: 52.5, w: 6.6, h: 11.6 }, 'nodo-21': { top: 61.5, left: 65, w: 6.6, h: 11.6 },
-    'nodo-22': { top: 79, left: 8.5, w: 6.6, h: 11.6 }, 'nodo-23': { top: 79, left: 19, w: 6.6, h: 11.6 },
-    'nodo-24': { top: 79, left: 29.5, w: 6.6, h: 11.6 }, 'nodo-25': { top: 79, left: 39, w: 6.6, h: 11.6 },
-    'nodo-26': { top: 79, left: 55, w: 6.6, h: 11.6 }, 'nodo-27': { top: 79, left: 65.5, w: 6.6, h: 11.6 },
-    'nodo-28': { top: 79, left: 75, w: 6.6, h: 11.6 }, 'nodo-29': { top: 79, left: 85.5, w: 6.6, h: 11.6 }
+    'nodo-20': { top: 61.5, left: 52.4, w: 6.6, h: 11.6 }, 'nodo-21': { top: 61.5, left: 65.4, w: 6.6, h: 11.6 },
+
+    'nodo-22': { top: 79, left: 8.2, w: 6.6, h: 11.6 }, 'nodo-23': { top: 79, left: 18.2, w: 6.6, h: 11.6 },
+    'nodo-24': { top: 79, left: 28.2, w: 6.6, h: 11.6 }, 'nodo-25': { top: 79, left: 38.2, w: 6.6, h: 11.6 },
+    'nodo-26': { top: 79, left: 56.2, w: 6.6, h: 11.6 }, 'nodo-27': { top: 79, left: 65.2, w: 6.6, h: 11.6 },
+    'nodo-28': { top: 79, left: 75.2, w: 6.6, h: 11.6 }, 'nodo-29': { top: 79, left: 85.2, w: 6.6, h: 11.6 }
 };
+
 
 export const COSTOS = {
     maquina: { madera: 3, hierro: 3 },
@@ -87,5 +93,7 @@ export const IMAGENES = {
     mgRojo: 'assets/cartas/MG_Rojo.png',
     mgAzul: 'assets/cartas/MG_Azul.png',
     canonRojo: 'assets/cartas/cañon rojo.png',
-    canonAzul: 'assets/cartas/cañon azul.png'
+    canonAzul: 'assets/cartas/cañon azul.png',
+    extractorRojo: 'assets/cartas/extractor rojo.png',
+    extractorAzul: 'assets/cartas/extractor azul.png'
 };

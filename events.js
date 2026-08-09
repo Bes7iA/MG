@@ -2,7 +2,7 @@ import { $, rivalDe, log } from './utils.js';
 import { NODOS_TABLERO } from './constants.js';
 import { gameState, maquinaSeleccionadaId, modoAccion, buscarMaquina } from './state.js';
 import { esCastillo, dueñoDeCastillo, sonConectados } from './board.js';
-import { renderTodo, dibujarConexionesSVG } from './render.js';
+import { renderTodo, dibujarConexionesSVG, aplicarPosicionesTablero } from './render.js';
 import {
     iniciarPartida, clicConquistaInicial, construirMaquina, activarModoExtractor,
     intentarConstruirExtractor, construirCanon, mejorarCastillo, comerciar, cancelarModo,
@@ -134,6 +134,7 @@ function inicializarEventos() {
         }
     });
 
+    aplicarPosicionesTablero();
     dibujarConexionesSVG();
 }
 

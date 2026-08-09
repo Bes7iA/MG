@@ -128,7 +128,7 @@ export function renderTablero() {
         <div class="carta-fallback terreno-${casilla.tipo}" style="display:none">
           <span>${EMOJI[casilla.tipo]}</span><span class="etiqueta">${NOMBRE[casilla.tipo]}</span>
         </div>
-        ${casilla.extractor ? '<span class="icono-extractor">⛏️</span>' : ''}
+        ${casilla.extractor ? `<img src="${casilla.dueno === 1 ? IMAGENES.extractorRojo : IMAGENES.extractorAzul}" class="icono-extractor" alt="Extractor" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><span class="icono-extractor-fallback" style="display:none">⛏️</span>` : ''}
       </div>`;
             el.classList.add(casilla.dueno === 1 ? 'terreno-p1' : 'terreno-p2');
         }
@@ -233,6 +233,17 @@ export function dibujarConexionesSVG() {
             linea.setAttribute('x2', b.x); linea.setAttribute('y2', b.y);
             svg.appendChild(linea);
         });
+    });
+}
+
+export function aplicarPosicionesTablero() {
+    Object.entries(POSICIONES).forEach(([id, p]) => {
+        const el = $(id);
+        if (!el) return;
+        el.style.top = `${p.top}%`;
+        el.style.left = `${p.left}%`;
+        el.style.width = `${p.w}%`;
+        el.style.height = `${p.h}%`;
     });
 }
 
