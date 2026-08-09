@@ -85,5 +85,7 @@ export const IMAGENES = {
     carbon: 'assets/cartas/carbon.png',
     hierro: 'assets/cartas/hierro.png',
     mgRojo: 'assets/cartas/MG_Rojo.png',
-    mgAzul: 'assets/cartas/MG_Azul.png'
+    mgAzul: 'assets/cartas/MG_Azul.png',
+    canonRojo: 'assets/cartas/cañon rojo.png',
+    canonAzul: 'assets/cartas/cañon azul.png'
 };

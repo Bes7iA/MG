@@ -337,6 +337,13 @@ h1, h2, h3, .titulo-juego, .indicador-turno-box {
 .hp-texto { font-size: 0.65rem; color: var(--texto-tenue); }
 .canon-icono { font-size: 0.9rem; }
 
+.slot-canon { width: 40%; margin: 4px auto; display: flex; align-items: center; justify-content: center; min-height: 24px; }
+.slot-canon .img-canon { width: 100%; height: auto; filter: drop-shadow(0 1px 2px rgba(0,0,0,.8)); }
+.slot-canon.canon-listo { cursor: pointer; }
+.slot-canon.canon-listo:hover { transform: scale(1.05); }
+.slot-canon.canon-inactivo { opacity: 0.5; cursor: default; }
+.slot-canon.canon-seleccionado { outline: 3px solid #f1c40f; border-radius: 6px; box-shadow: 0 0 10px rgba(241,196,15,0.6); }
+
 /* FILA 1 */
 #nodo-1 { top: 8.5%; left: 8.5%; } #nodo-2 { top: 8.5%; left: 19%; }
 #nodo-3 { top: 8.5%; left: 29.5%; } #nodo-4 { top: 8.5%; left: 39%; }

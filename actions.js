@@ -1,5 +1,5 @@
 import { $, rivalDe, log } from './utils.js';
-import { RECURSOS, EMOJI, NOMBRE, COSTOS, NODOS_TABLERO } from './constants.js';
+import { RECURSOS, EMOJI, NOMBRE, COSTOS, NODOS_TABLERO, CONEXIONES_TABLERO } from './constants.js';
 import {
     gameState, maquinaSeleccionadaId, modoAccion,
     crearEstadoInicial, crearMaquina, crearMazoTerrenos,
@@ -153,6 +153,18 @@ export async function clicConquistaInicial(nodoId) {
         return;
     }
     const casilla = gameState.tablero[nodoId];
+
+    const confirmado = await preguntar(
+        'Confirmar terreno inicial',
+        `¿Reclamas ${nodoId} como tu terreno inicial? Esta decisión es permanente y no se puede cambiar.`,
+        [
+            { label: 'Confirmar', value: true, destacado: true },
+            { label: 'Elegir otra casilla', value: false }
+        ],
+        false
+    );
+    if (!confirmado) return;
+
     casilla.revelado = true;
     casilla.dueno = numJ;
     log(`✅ Jugador ${numJ} reclama ${nodoId} (${NOMBRE[casilla.tipo]}).`);
@@ -554,24 +566,6 @@ export async function iniciarAtaqueCastillo(atacante, numJ) {
         if (!ok) return;
     }
 
-    if (rival.castillo.canon && rival.castillo.canonListo && !rival.castillo.canonDisparoUsado) {
-        const disparar = await preguntar('💣 Defensa con cañón',
-            `Jugador ${rivalNum}: tienes un cañón listo. ¿Disparas en defensa a la máquina atacante (2d4 de daño)?`,
-            [{ label: 'Disparar', value: true, destacado: true }, { label: 'No disparar', value: false }]);
-        if (disparar) {
-            rival.castillo.canonDisparoUsado = true;
-            const dmg = roll2D4();
-            atacante.hp -= dmg;
-            log(`💣 El cañón de Jugador ${rivalNum} hace ${dmg} de daño a la máquina atacante.`);
-            if (atacante.hp <= 0) {
-                destruirMaquina(atacante);
-                log('☠️ La máquina atacante fue destruida por el cañón antes de poder atacar.');
-                renderTodo();
-                return;
-            }
-        }
-    }
-
     atacante.accionRealizada = true;
 
     if (objetivoMaquina) {
@@ -582,6 +576,7 @@ export async function iniciarAtaqueCastillo(atacante, numJ) {
         const dmg = atacante.dano + rollD4();
         rival.castillo.hp = Math.max(0, rival.castillo.hp - dmg);
         log(`💥 Jugador ${numJ} ataca el castillo enemigo por ${dmg} de daño (HP restante: ${rival.castillo.hp}/${rival.castillo.hpMax}).`);
+        await preguntar('💥 ¡Impacto al castillo!', `Hiciste ${dmg} de daño al castillo enemigo. HP restante: ${rival.castillo.hp}/${rival.castillo.hpMax}.`, [{ label: 'Continuar', value: true, destacado: true }], false);
     }
 
     renderTodo();
@@ -619,12 +614,34 @@ export async function atacarCastilloConSeleccionada() {
     await iniciarAtaqueCastillo(maquina, numJ);
 }
 
-export function activarModoDisparo() {
+export async function activarModoDisparo() {
     const numJ = gameState.turnoActual;
     const jugador = gameState.jugadores[numJ];
     if (!jugador.castillo.canon || !jugador.castillo.canonListo) { log('🛑 No tienes un cañón listo.'); return; }
     if (jugador.castillo.canonDisparoUsado) { log('🛑 Ya usaste el cañón este turno.'); return; }
-    setModoAccion(modoAccion === 'disparo' ? null : 'disparo');
+
+    if (modoAccion === 'disparo') {
+        setModoAccion(null);
+        renderTodo();
+        return;
+    }
+
+    const hayObjetivos = (CONEXIONES_TABLERO[`castillo-p${numJ}`] || []).some((v) => {
+        const c = gameState.tablero[v];
+        return c && c.ocupante && c.ocupante.jugador !== numJ;
+    });
+
+    if (!hayObjetivos) {
+        await preguntar(
+            '💣 Sin objetivos',
+            'No hay objetivos alcanzables con el cañón en este momento.',
+            [{ label: 'Entendido', value: true, destacado: true }],
+            false
+        );
+        return;
+    }
+
+    setModoAccion('disparo');
     renderTodo();
 }
 
@@ -639,11 +656,24 @@ export async function intentarDispararCanon(nodoId) {
     const objetivo = buscarMaquina(destino.ocupante.jugador, destino.ocupante.maquinaId);
     if (!objetivo) return;
 
+    const confirmado = await preguntar(
+        '💣 Disparar cañón',
+        `¿Atacarás a esta máquina de guerra con el cañón (2d4 de daño)?`,
+        [
+            { label: 'Disparar', value: true, destacado: true },
+            { label: 'Cancelar', value: false }
+        ],
+        false
+    );
+    if (!confirmado) { setModoAccion(null); renderTodo(); return; }
+
     jugador.castillo.canonDisparoUsado = true;
     setModoAccion(null);
     const dmg = roll2D4();
     objetivo.hp -= dmg;
     log(`💣 Jugador ${numJ} dispara el cañón: ${dmg} de daño a la máquina en ${nodoId}.`);
+    renderTodo();
+    await preguntar('💣 ¡Impacto de cañón!', `El cañón hizo ${dmg} de daño. HP restante del objetivo: ${Math.max(objetivo.hp, 0)}.`, [{ label: 'Continuar', value: true, destacado: true }], false);
     if (objetivo.hp <= 0) destruirMaquina(objetivo);
     renderTodo();
 }

@@ -84,6 +84,18 @@ export function renderPanel(numJ) {
         const activa = m && maquinaSeleccionadaId === m.id && esTurnoDeEste && !m.accionRealizada && m.puedeMoverse;
         el.classList.toggle('slot-seleccionado', !!activa);
     }
+    const elCanon = $(`castillo-p${numJ}-canon`);
+    if (c.canon) {
+        const img = numJ === 1 ? IMAGENES.canonRojo : IMAGENES.canonAzul;
+        elCanon.innerHTML = `<img src="${img}" class="img-canon" alt="Cañón" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><span class="icono-canon-fallback" style="display:none">💣</span>`;
+        const canonListo = c.canon && c.canonListo && !c.canonDisparoUsado;
+        elCanon.classList.toggle('canon-listo', esTurnoDeEste && canonListo);
+        elCanon.classList.toggle('canon-inactivo', !(esTurnoDeEste && canonListo));
+        elCanon.classList.toggle('canon-seleccionado', modoAccion === 'disparo' && esTurnoDeEste);
+    } else {
+        elCanon.innerHTML = '';
+        elCanon.classList.remove('canon-listo', 'canon-inactivo', 'canon-seleccionado');
+    }
 }
 
 export function fichaMgHTML(m, numJ) {
@@ -196,10 +208,8 @@ export function renderBotonesInferiores() {
         const puedeAtacarCastillo = !maquina.accionRealizada && sonConectados(maquina.ubicacion, `castillo-p${rivalDe(numJ)}`);
         $('btnAtacarCastillo').classList.toggle('oculta', !puedeAtacarCastillo);
         const puedeDisparar = jugador.castillo.canon && jugador.castillo.canonListo && !jugador.castillo.canonDisparoUsado;
-        $('btnDispararCanon').classList.toggle('oculta', !puedeDisparar);
     } else if (enJuego) {
         const puedeDisparar = jugador.castillo.canon && jugador.castillo.canonListo && !jugador.castillo.canonDisparoUsado;
-        $('btnDispararCanon').classList.toggle('oculta', !puedeDisparar);
         $('btnAtacarCastillo').classList.add('oculta');
     }
 }

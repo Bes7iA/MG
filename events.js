@@ -95,7 +95,6 @@ function inicializarEventos() {
 
     $('btnMejorarMaquina').addEventListener('click', () => mejorarMaquinaSeleccionada());
     $('btnAtacarCastillo').addEventListener('click', () => atacarCastilloConSeleccionada());
-    $('btnDispararCanon').addEventListener('click', activarModoDisparo);
     $('btnDeseleccionar').addEventListener('click', () => { seleccionarMaquina(null); renderTodo(); });
 
     NODOS_TABLERO.forEach((id) => {
@@ -109,6 +108,16 @@ function inicializarEventos() {
             const el = $(`castillo-p${numCastillo}-slot${slot}`);
             if (el) el.addEventListener('click', (e) => { e.stopPropagation(); clicSlotCastillo(numCastillo, slot); });
         });
+    });
+    [1, 2].forEach((numCastillo) => {
+        const elCanon = $(`castillo-p${numCastillo}-canon`);
+        if (elCanon) {
+            elCanon.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (gameState.turnoActual !== numCastillo) return;
+                activarModoDisparo();
+            });
+        }
     });
     [1, 2].forEach((numJ) => {
         const lista = $(`p${numJ}-maquinas`);
