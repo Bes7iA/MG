@@ -28,7 +28,7 @@ export function renderTurno() {
         box.classList.toggle('turno-p2', numJ === 2);
     }
     $('indicadorRonda').textContent = `Ronda ${gameState.numeroRonda}`;
-    const iconos = { rayo: '🌩️ Rayo', flecha: '🏹 Flecha', martillo: '🔨 Martillo' };
+    const iconos = { rayo: '⚡ Rayo', flecha: '⏫ Flecha', martillo: '🔨 Martillo' };
     $('indicadorDado').textContent = gameState.dado.resultado ? `🎲 ${iconos[gameState.dado.resultado]}` : '🎲 —';
 
     document.getElementById('tablero-contenedor').classList.toggle('turno-p2', numJ === 2);

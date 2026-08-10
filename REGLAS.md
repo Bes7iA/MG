@@ -1,12 +1,15 @@
 # Reglas del juego — Máquinas de Guerra
 
-Este documento describe las reglas completas, tal como están implementadas
-en el código a la fecha. Si una regla cambia en el futuro, actualizar este
-archivo junto con el código.
+Maquinas de Guerra es un juego en donde 2 jugadores se enfrentan para conquistar territorio, obtener recursos y destruir 
+el castillo oponente.
+Crea y envía a tus Maquinas de Guerra para reclamar territorio y sus recursos,
+y utilizalos para mejorarlas, crear mas y mejorar tu castillo.
+
+Las tácticas y estrategias de expansion y ataque definirán al ganador.
 
 ## 1. Recursos y producción
 
-- Hay tres recursos: madera, carbón y hierro.
+- Hay tres recursos: 🌲madera, 🌑carbón y ⚙hierro.
 - Al iniciar la partida, cada jugador recibe 1 de cada recurso, más +1
   adicional del recurso de la carta de terreno que sobró del mazo (esa
   carta se revela y beneficia a ambos jugadores por igual).
@@ -52,11 +55,6 @@ archivo junto con el código.
       castillo en ese mismo paso).
     - Conquistar una casilla enemiga ya revelada: cuesta 2 carbón, o 3
       carbón si esa casilla tiene un extractor.
-- **Bono de la Flecha:** cada máquina de guerra puede omitir el costo de
-  recurso de su movimiento (no de conquista) **una vez por turno, por
-  máquina**. Esto se consume la primera vez que la máquina necesitaría
-  pagar un recurso para moverse — los movimientos gratis dentro/fuera
-  del castillo no cuentan para este límite.
 - Conquistar una casilla (nueva o enemiga) inmoviliza a esa máquina por
   el resto del turno.
 
@@ -77,7 +75,27 @@ archivo junto con el código.
   llegar a nivel 5/5). El botón de construir máquina se deshabilita al
   alcanzar el límite.
 
-## 4. Combate
+## 4. Bonos por turno
+
+ Al inicio de cada turno se tira un dado con 3 posibles resultados, los 
+  que añaden un bono extra para ese turno en particular
+
+- **Flecha:** cada máquina de guerra puede omitir el costo de
+  recurso de su movimiento (no de conquista) **una vez por turno, por
+  máquina**. Esto se consume la primera vez que la máquina necesitaría
+  pagar un recurso para moverse — los movimientos gratis dentro/fuera
+  del castillo no cuentan para este límite.
+- **Rayo:** +1 a cada tipo de recurso del que el jugador tenga al
+  menos un terreno conquistado.
+- **Martillo:** el jugador elige entre dos efectos:
+  - Construir de inmediato: lo que se construya este turno se activa
+  sin esperar al siguiente turno.
+  - Reparar: cura 1 HP a una máquina aliada con HP incompleto,
+  seleccionándola con clic (se resalta en verde en tablero y
+  panel). Si no hay ninguna máquina reparable, se avisa y el bono
+  se pierde.
+
+## 5. Combate
 
 - El combate se activa automáticamente al mover una máquina hacia una
   casilla ocupada por una máquina enemiga, con confirmación previa.
@@ -112,7 +130,7 @@ archivo junto con el código.
     - Queda disponible para disparar a partir del turno siguiente a su
       construcción (o de inmediato si el dado sacó Martillo ese turno).
 
-## 5. Castillo
+## 6. Castillo
 
 - HP inicial: 20.
 - Mejorar cuesta 4 hierro; +2 HP (máximo y actual) por mejora. Máximo 5
@@ -122,7 +140,7 @@ archivo junto con el código.
 - Condición de victoria: si el HP del castillo enemigo llega a 0, la
   partida termina y gana el jugador que lo destruyó.
 
-## 6. Turnos y fases
+## 7. Turnos y fases
 
 ### Preparación (una sola vez)
 
@@ -140,18 +158,8 @@ archivo junto con el código.
 1. Producción: el jugador activo recibe los recursos generados por sus
    terrenos y extractores (excepto en el primerísimo turno de la
    partida, ver sección 1).
-2. Dado automático, con aviso al jugador indicando el resultado y su
-   efecto:
-    - 🌩️ **Rayo:** +1 a cada tipo de recurso del que el jugador tenga al
-      menos un terreno conquistado.
-    - 🏹 **Flecha:** ver sección 2 (movimiento gratis, 1 vez por máquina).
-    - 🔨 **Martillo:** el jugador elige entre dos efectos:
-        - Construir de inmediato: lo que se construya este turno se activa
-          sin esperar al siguiente turno.
-        - Reparar: cura 1 HP a una máquina aliada con HP incompleto,
-          seleccionándola con clic (se resalta en verde en tablero y
-          panel). Si no hay ninguna máquina reparable, se avisa y el bono
-          se pierde.
+2. Dado de bonificación: Se avisa al jugador del resultado del dado de bono 
+   que lo afectara este turno (ver sección 4)
 3. Acciones libres: construir máquina (máx. 1/turno), construir
    extractor (máx. 1/turno), construir cañón (una vez en la partida),
    mejorar máquina, mejorar castillo, comerciar, mover/atacar con

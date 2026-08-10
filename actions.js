@@ -34,7 +34,7 @@ async function moverConPosibleFlecha(maquina, numJ, jugador, origenEsCastillo) {
     const motivo = origenEsCastillo
         ? ' (salida del castillo, gratis)'
         : gratisPorFlecha
-            ? ' (🏹 movimiento gratis por Flecha)'
+            ? ' (⏫ movimiento gratis por Flecha)'
             : ` (pagó 1 ${NOMBRE[recursoUsado]})`;
     return { cancelado: false, motivo };
 }
@@ -85,8 +85,8 @@ async function mostrarAvisoDado(numJ, resultado) {
     }
 
     const info = {
-        rayo: { emoji: '🌩️', nombre: 'Rayo', desc: '+1 de cada recurso del que tengas al menos un terreno conquistado.' },
-        flecha: { emoji: '🏹', nombre: 'Flecha', desc: 'Tus máquinas pueden moverse 1 casilla gratis este turno (conquistar sigue costando).' }
+        rayo: { emoji: '⚡', nombre: 'Rayo', desc: '+1 de cada recurso del que tengas al menos un terreno conquistado.' },
+        flecha: { emoji: '⏫', nombre: 'Flecha', desc: 'Tus máquinas pueden moverse 1 casilla gratis este turno (conquistar sigue costando).' }
     }[resultado];
 
     await preguntar(
@@ -245,10 +245,10 @@ export async function iniciarTurno() {
         RECURSOS.forEach((r) => {
             if (contarTerrenos(numJ, r) > 0) { jugador.recursos[r] += 1; ganados.push(NOMBRE[r]); }
         });
-        log(`🌩️ Rayo: +1 de ${ganados.length ? ganados.join(', ') : 'nada (sin terreno conquistado)'}.`);
+        log(`⚡ Rayo: +1 de ${ganados.length ? ganados.join(', ') : 'nada (sin terreno conquistado)'}.`);
     } else if (resultado === 'flecha') {
         gameState.flags.flechaDisponible = true;
-        log('🏹 Flecha: tus máquinas pueden moverse 1 casilla gratis este turno (conquistar sigue costando).');
+        log('⏫ Flecha: tus máquinas pueden moverse 1 casilla gratis este turno (conquistar sigue costando).');
     } else if (resultado === 'martillo') {
         gameState.flags.martilloDisponible = true;
         log('🔨 Martillo: lo que construyas este turno se activa de inmediato, o puedes usarlo para curar 1 HP a una máquina aliada.');
