@@ -2,12 +2,12 @@ import { $, rivalDe, log } from './utils.js';
 import { RECURSOS, EMOJI, NOMBRE, COSTOS, NODOS_TABLERO, CONEXIONES_TABLERO } from './constants.js';
 import {
     gameState, maquinaSeleccionadaId, modoAccion,
-    crearEstadoInicial, crearMaquina, crearMazoTerrenos,
+    crearMaquina, crearMazoTerrenos,
     recalcularProduccion, contarTerrenos, contarExtractores, contarMaquinasEnCastillo,
     buscarMaquina, iniciarNuevoEstado, setSeleccion, setModoAccion,
     tienePago, pagar, costoTexto
 } from './state.js';
-import { esNodo, esCastillo, dueñoDeCastillo, sonConectados, liberarCasilla } from './board.js';
+import { esCastillo, dueñoDeCastillo, sonConectados, liberarCasilla } from './board.js';
 import { rollD4, roll2D4, resolverCombate, destruirMaquina } from './combat.js';
 import { preguntar, elegirRecurso } from './ui-modal.js';
 import { renderTodo, mostrarPantallaFin } from './render.js';
@@ -16,6 +16,27 @@ function nombreColor(numJ) {
     return numJ === 1
         ? '<span class="color-rojo">Jugador Rojo</span>'
         : '<span class="color-azul">Jugador Azul</span>';
+}
+
+async function moverConPosibleFlecha(maquina, numJ, jugador, origenEsCastillo) {
+    let recursoUsado = null;
+    let gratisPorFlecha = false;
+    if (!origenEsCastillo) {
+        if (gameState.flags.flechaDisponible && !maquina.movimientoGratisUsado) {
+            gratisPorFlecha = true;
+            maquina.movimientoGratisUsado = true;
+        } else {
+            recursoUsado = await elegirRecurso(numJ, 'Mover', 'Elige con qué recurso pagas el movimiento (1).');
+            if (!recursoUsado) return { cancelado: true };
+            jugador.recursos[recursoUsado] -= 1;
+        }
+    }
+    const motivo = origenEsCastillo
+        ? ' (salida del castillo, gratis)'
+        : gratisPorFlecha
+            ? ' (🏹 movimiento gratis por Flecha)'
+            : ` (pagó 1 ${NOMBRE[recursoUsado]})`;
+    return { cancelado: false, motivo };
 }
 
 async function mostrarAvisoTurnoConquista(numJ) {
@@ -443,23 +464,12 @@ export async function intentarMover(maquina, destinoId) {
     }
 
     if (destino.dueno === numJ) {
-        let recursoUsado = null;
-        let gratisPorFlecha = false;
-        if (!origenEsCastillo) {
-            if (gameState.flags.flechaDisponible && !maquina.movimientoGratisUsado) {
-                gratisPorFlecha = true;
-                maquina.movimientoGratisUsado = true;
-            } else {
-                recursoUsado = await elegirRecurso(numJ, 'Mover', 'Elige con qué recurso pagas el movimiento (1).');
-                if (!recursoUsado) return;
-                jugador.recursos[recursoUsado] -= 1;
-            }
-        }
+        const resultado = await moverConPosibleFlecha(maquina, numJ, jugador, origenEsCastillo);
+        if (resultado.cancelado) return;
         liberarCasilla(maquina);
         maquina.ubicacion = destinoId;
         destino.ocupante = { jugador: numJ, maquinaId: maquina.id };
-        const motivo = origenEsCastillo ? ' (salida del castillo, gratis)' : gratisPorFlecha ? ' (🏹 movimiento gratis por Flecha)' : ` (pagó 1 ${NOMBRE[recursoUsado]})`;
-        log(`🚶 Jugador ${numJ} mueve una máquina a ${destinoId}${motivo}.`);
+        log(`🚶 Jugador ${numJ} mueve una máquina a ${destinoId}${resultado.motivo}.`);
         renderTodo();
         return;
     }
@@ -474,23 +484,12 @@ export async function intentarMover(maquina, destinoId) {
     if (!accion) return;
 
     if (accion === 'pasar') {
-        let recursoUsado = null;
-        let gratisPorFlecha = false;
-        if (!origenEsCastillo) {
-            if (gameState.flags.flechaDisponible && !maquina.movimientoGratisUsado) {
-                gratisPorFlecha = true;
-                maquina.movimientoGratisUsado = true;
-            } else {
-                recursoUsado = await elegirRecurso(numJ, 'Mover', 'Elige con qué recurso pagas el movimiento (1).');
-                if (!recursoUsado) return;
-                jugador.recursos[recursoUsado] -= 1;
-            }
-        }
+        const resultado = await moverConPosibleFlecha(maquina, numJ, jugador, origenEsCastillo);
+        if (resultado.cancelado) return;
         liberarCasilla(maquina);
         maquina.ubicacion = destinoId;
         destino.ocupante = { jugador: numJ, maquinaId: maquina.id };
-        const motivo = origenEsCastillo ? ' (salida del castillo, gratis)' : gratisPorFlecha ? ' (🏹 movimiento gratis por Flecha)' : ` (pagó 1 ${NOMBRE[recursoUsado]})`;
-        log(`🚶 Jugador ${numJ} pasa por ${destinoId} sin conquistar${motivo}.`);
+        log(`🚶 Jugador ${numJ} pasa por ${destinoId} sin conquistar${resultado.motivo}.`);
         renderTodo();
         return;
     }

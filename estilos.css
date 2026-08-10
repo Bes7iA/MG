@@ -373,7 +373,7 @@ h1, h2, h3, .titulo-juego, .indicador-turno-box {
 .btn-cancelar { background: var(--peligro) !important; }
 .panel-maquina-seleccionada { border-left: 1px solid var(--panel-border); padding-left: 18px; }
 #info-maquina-sel { font-size: 1.23rem; color: var(--texto-tenue); }
-#btnAtacarCastillo, #btnDispararCanon { background: var(--peligro); }
+#btnAtacarCastillo { background: var(--peligro); }
 
 /* LOG (reducido a la mitad, ahora debajo de la barra de botones) */
 #log-panel {

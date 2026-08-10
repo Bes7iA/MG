@@ -3,7 +3,7 @@ import { RECURSOS, EMOJI, NOMBRE, NODOS_TABLERO, CONEXIONES_TABLERO, POSICIONES,
 import { gameState, maquinaSeleccionadaId, modoAccion, buscarMaquina, contarMaquinasEnCastillo, contarExtractores, recalcularProduccion } from './state.js';
 import { esNodo, esCastillo, dueñoDeCastillo, sonConectados } from './board.js';
 import { rivalDe } from './utils.js';
-import { tienePago, costoTexto } from './state.js';
+import { tienePago } from './state.js';
 
 export function renderTodo() {
     if (!gameState) return;
@@ -207,9 +207,7 @@ export function renderBotonesInferiores() {
         $('btnMejorarMaquina').disabled = maquina.mejoras >= 3 || !tienePago(numJ, COSTOS.mejoraMaquina);
         const puedeAtacarCastillo = !maquina.accionRealizada && sonConectados(maquina.ubicacion, `castillo-p${rivalDe(numJ)}`);
         $('btnAtacarCastillo').classList.toggle('oculta', !puedeAtacarCastillo);
-        const puedeDisparar = jugador.castillo.canon && jugador.castillo.canonListo && !jugador.castillo.canonDisparoUsado;
     } else if (enJuego) {
-        const puedeDisparar = jugador.castillo.canon && jugador.castillo.canonListo && !jugador.castillo.canonDisparoUsado;
         $('btnAtacarCastillo').classList.add('oculta');
     }
 }
