@@ -1,6 +1,6 @@
 // ---------- CONSTANTES ----------
 export const RECURSOS = ['madera', 'carbon', 'hierro'];
-export const EMOJI = { madera: '🪵', carbon: '⬛', hierro: '⚙️' };
+export const EMOJI = { madera: '🌲', carbon: '🌑', hierro: '⚙️' };
 export const NOMBRE = { madera: 'Madera', carbon: 'Carbón', hierro: 'Hierro' };
 
 export const NODOS_TABLERO = Array.from({ length: 29 }, (_, i) => `nodo-${i + 1}`);
