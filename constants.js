@@ -47,20 +47,20 @@ export const CONEXIONES_TABLERO = {
 // Posiciones (%) usadas SOLO para calcular los centros de las líneas de conexión del SVG.
 // Deben coincidir con las reglas de estilos.css.
 export const POSICIONES = {
-    'castillo-p1': { top: 28.5, left: 5.5, w: 12, h: 40 },
-    'castillo-p2': { top: 28.5, left: 82.5, w: 12, h: 40 },
+    'castillo-p1': { top: 28.5, left: 5.5, w: 11.5, h: 40 },
+    'castillo-p2': { top: 28.5, left: 82.5, w: 11.5, h: 40 },
 
     'nodo-1': { top: 8.5, left: 8.2, w: 6.6, h: 11.6 }, 'nodo-2': { top: 8.5, left: 18.2, w: 6.6, h: 11.6 },
     'nodo-3': { top: 8.5, left: 28.2, w: 6.6, h: 11.6 }, 'nodo-4': { top: 8.5, left: 38.2, w: 6.6, h: 11.6 },
     'nodo-5': { top: 8.5, left: 55.2, w: 6.6, h: 11.6 }, 'nodo-6': { top: 8.5, left: 65.2, w: 6.6, h: 11.6 },
-    'nodo-7': { top: 8.5, left: 75.2, w: 6.6, h: 11.6 }, 'nodo-8': { top: 8.5, left: 85.2, w: 6.6, h: 11.6 },
+    'nodo-7': { top: 8.5, left: 75.2, w: 6.6, h: 11.6 }, 'nodo-8': { top: 8.5, left: 84.7, w: 6.6, h: 11.6 },
 
     'nodo-9': { top: 26, left: 28, w: 6.6, h: 11.6 }, 'nodo-10': { top: 26, left: 41, w: 6.6, h: 11.6 },
     'nodo-11': { top: 26, left: 52.4, w: 6.6, h: 11.6 }, 'nodo-12': { top: 26, left: 65.4, w: 6.6, h: 11.6 },
 
-    'nodo-13': { top: 42.7, left: 20.5, w: 6.6, h: 11.6 }, 'nodo-14': { top: 42.7, left: 35.5, w: 6.6, h: 11.6 },
-    'nodo-15': { top: 42.7, left: 46.7, w: 6.6, h: 11.6 }, 'nodo-16': { top: 42.7, left: 57.9, w: 6.6, h: 11.6 },
-    'nodo-17': { top: 42.7, left: 72.9, w: 6.6, h: 11.6 },
+    'nodo-13': { top: 42.7, left: 21.5, w: 6.6, h: 11.6 }, 'nodo-14': { top: 42.7, left: 34.5, w: 6.6, h: 11.6 },
+    'nodo-15': { top: 42.7, left: 46.7, w: 6.6, h: 11.6 }, 'nodo-16': { top: 42.7, left: 58.9, w: 6.6, h: 11.6 },
+    'nodo-17': { top: 42.7, left: 71.7, w: 6.6, h: 11.6 },
 
     'nodo-18': { top: 61.5, left: 28, w: 6.6, h: 11.6 }, 'nodo-19': { top: 61.5, left: 41, w: 6.6, h: 11.6 },
     'nodo-20': { top: 61.5, left: 52.4, w: 6.6, h: 11.6 }, 'nodo-21': { top: 61.5, left: 65.4, w: 6.6, h: 11.6 },
@@ -68,7 +68,7 @@ export const POSICIONES = {
     'nodo-22': { top: 79, left: 8.2, w: 6.6, h: 11.6 }, 'nodo-23': { top: 79, left: 18.2, w: 6.6, h: 11.6 },
     'nodo-24': { top: 79, left: 28.2, w: 6.6, h: 11.6 }, 'nodo-25': { top: 79, left: 38.2, w: 6.6, h: 11.6 },
     'nodo-26': { top: 79, left: 56.2, w: 6.6, h: 11.6 }, 'nodo-27': { top: 79, left: 65.2, w: 6.6, h: 11.6 },
-    'nodo-28': { top: 79, left: 75.2, w: 6.6, h: 11.6 }, 'nodo-29': { top: 79, left: 85.2, w: 6.6, h: 11.6 }
+    'nodo-28': { top: 79, left: 75.2, w: 6.6, h: 11.6 }, 'nodo-29': { top: 79, left: 84.7, w: 6.6, h: 11.6 }
 };
 
 

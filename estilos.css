@@ -238,7 +238,7 @@ h1, h2, h3, .titulo-juego, .indicador-turno-box {
 
 #imagen-tablero { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; opacity: 1; }
 #conexiones-svg { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; }
-#conexiones-svg line { stroke: #655132; stroke-width: 0.5; }
+#conexiones-svg line { stroke: #a37d49; stroke-width: 0.6; }
 
 .nodo-terreno {
     position: absolute;
