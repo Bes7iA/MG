@@ -188,6 +188,7 @@ export async function clicConquistaInicial(nodoId) {
 
     casilla.revelado = true;
     casilla.dueno = numJ;
+    gameState.jugadores[numJ].turnosSinConquista = 0;
     log(`✅ Jugador ${numJ} reclama ${nodoId} (${NOMBRE[casilla.tipo]}).`);
 
     const inicioMG = await preguntar('Máquina de guerra inicial',
@@ -227,6 +228,35 @@ export async function iniciarTurno() {
     jugador.accionesTurno = { mgConstruida: false, extractorConstruido: false };
     gameState.flags = { flechaDisponible: false, martilloDisponible: false };
     jugador.maquinas.forEach((m) => { m.movimientoGratisUsado = false; });
+
+    const tieneTerreno = Object.values(gameState.tablero).some((c) => c.dueno === numJ);
+    if (!tieneTerreno) {
+        if (jugador.turnosSinConquista >= 3) {
+            gameState.fase = 'finPartida';
+            gameState.ganador = rivalDe(numJ);
+            log(`💀 Jugador ${numJ} lleva 3 turnos sin territorio propio. Jugador ${gameState.ganador} gana la partida.`);
+            renderTodo();
+            await preguntar(
+                '💀 Derrota por falta de territorio',
+                `Jugador ${numJ} lleva 3 turnos consecutivos sin lograr conquistar ni una casilla. ¡${nombreColor(gameState.ganador)} gana la partida!`,
+                [{ label: 'Continuar', value: true, destacado: true }],
+                true
+            );
+            mostrarPantallaFin();
+            return;
+        }
+        jugador.turnosSinConquista += 1;
+        const turnosRestantes = 3 - jugador.turnosSinConquista;
+        log(`⚠️ Jugador ${numJ} no tiene territorio propio (turno ${jugador.turnosSinConquista}/3 sin conquistar).`);
+        await preguntar(
+            '⚠️ Sin territorio',
+            `${nombreColor(numJ)} no tiene ningún terreno conquistado. Si no logra conquistar al menos una casilla, perderá la partida en ${turnosRestantes} ${turnosRestantes === 1 ? 'turno' : 'turnos'} más.`,
+            [{ label: 'Entendido', value: true, destacado: true }],
+            true
+        );
+    } else {
+        jugador.turnosSinConquista = 0;
+    }
 
     recalcularProduccion(numJ);
     if (gameState.primeraProduccionHecha) {
@@ -454,6 +484,7 @@ export async function intentarMover(maquina, destinoId) {
         jugador.recursos.carbon -= COSTOS.conquistaNueva.carbon;
         destino.revelado = true;
         destino.dueno = numJ;
+        jugador.turnosSinConquista = 0;
         liberarCasilla(maquina);
         maquina.ubicacion = destinoId;
         destino.ocupante = { jugador: numJ, maquinaId: maquina.id };
@@ -498,6 +529,7 @@ export async function intentarMover(maquina, destinoId) {
         jugador.recursos.carbon -= costoConquista;
         const rival = gameState.jugadores[destino.dueno];
         destino.dueno = numJ;
+        jugador.turnosSinConquista = 0;
         liberarCasilla(maquina);
         maquina.ubicacion = destinoId;
         destino.ocupante = { jugador: numJ, maquinaId: maquina.id };
@@ -532,6 +564,7 @@ export async function intentarCombateOEntrada(atacante, destinoId) {
             if (accion === 'conquistar') {
                 jugador.recursos.carbon -= costoConquista;
                 destino.dueno = atacante.jugador;
+                jugador.turnosSinConquista = 0;
                 log(`🏳️ Jugador ${atacante.jugador} conquista ${destinoId} tras la batalla.`);
             }
         }

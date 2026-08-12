@@ -12,7 +12,8 @@ export function crearJugador(numero) {
         produccion: { madera: 0, carbon: 0, hierro: 0 },
         castillo: { hp: 20, hpMax: 20, mejoras: 0, limiteMG: 3, canon: false, canonListo: false, canonDisparoUsado: false },
         maquinas: [],
-        accionesTurno: { mgConstruida: false, extractorConstruido: false }
+        accionesTurno: { mgConstruida: false, extractorConstruido: false },
+        turnosSinConquista: 0
     };
 }
 
