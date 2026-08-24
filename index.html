@@ -20,6 +20,13 @@
         <h1 class="titulo-pantalla-inicio">Máquinas<br>de Guerra</h1>
         <p class="lobby-descripcion">Conquista terreno, extrae recursos, construye tu ejército y derriba el castillo rival antes de que él derribe el tuyo.</p>
         <button id="btnIniciar" class="btn-principal">Iniciar Partida ⚔️</button>
+        <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+
+        <p>&copy; <span id="year"></span> Maquinas de Guerra. Todos los derechos reservados.</p>
+        <script>
+            // Inserta el año actual de forma automática
+            document.getElementById('year').textContent = new Date().getFullYear();
+        </script>
     </div>
 </div>
 
@@ -30,12 +37,15 @@
 
     <header class="topbar">
         <h1 class="titulo-juego">Máquinas de Guerra</h1>
-        <div class="control-central">
-            <div class="indicador-turno-box" id="indicadorTurno">—</div>
-            <div class="indicador-dado" id="indicadorDado" title="Resultado del dado de este turno">🎲 —</div>
-            <button id="btnFinTurno">Terminar Turno ⌛</button>
+        <div class="fila-controles">
+            <div class="control-central">
+                <div class="indicador-turno-box" id="indicadorTurno">—</div>
+                <div class="indicador-dado" id="indicadorDado" title="Resultado del dado de este turno">🎲 —</div>
+                <button id="btnFinTurno">Terminar Turno ⌛</button>
+            </div>
+            <div class="indicador-ronda" id="indicadorRonda">Ronda 1</div>
+            <button id="btnReglas" class="btn-reglas" title="Ver reglas del juego">📖 Reglas</button>
         </div>
-        <div class="indicador-ronda" id="indicadorRonda">Ronda 1</div>
     </header>
 
     <div class="contenedor-principal">
@@ -50,7 +60,7 @@
 
         <!-- TABLERO DE JUEGO -->
         <div id="tablero-contenedor" class="tablero-mapa">
-            <img src="assets/tablero.png" id="imagen-tablero" alt="" onerror="this.style.display='none'">
+            <img src="assets/Tablero.png" id="imagen-tablero" alt="" onerror="this.style.display='none'">
             <svg id="conexiones-svg" viewBox="0 0 100 100" preserveAspectRatio="none"></svg>
 
             <!-- CASTILLOS -->
@@ -126,23 +136,16 @@
 
     <!-- CONTROLES INFERIORES -->
     <div class="barra-inferior">
-        <div class="acciones-principales" id="acciones-principales">
-            <button id="btnConstruirMG">🛠️ Máquina (3🪵 3⚙️)</button>
-            <button id="btnConstruirExtractor">⛏️ Extractor (2🪵 2⬛)</button>
-            <button id="btnConstruirCanon">💣 Cañón (4🪵 4⬛ 4⚙️)</button>
+        <div class="grid-acciones" id="grid-acciones">
+            <button id="btnConstruirMG">🛠️ Máquina (3🌲 3⚙️)</button>
+            <button id="btnConstruirExtractor">⛏️ Extractor (2🌲 2🌑)</button>
+            <button id="btnConstruirCanon">💣 Cañón (4🌲 4🌑 4⚙️)</button>
             <button id="btnMejorarCastillo">🏰 Mejorar Castillo (4⚙️)</button>
+            <button id="btnMejorarMaquina" >⬆️ Mejorar (1🌲 1⚙️)</button>
             <button id="btnComerciar">🔄 Comerciar (4→1)</button>
-            <button id="btnCancelarModo" class="btn-cancelar oculta">✖️ Cancelar</button>
+            <button id="btnAtacarCastillo" >⚔️ Atacar Castillo Enemigo</button>
+            <button id="btnCancelarModo" >✖️ Cancelar</button>
         </div>
-
-        <div class="panel-maquina-seleccionada oculta" id="panel-maquina-sel">
-            <span id="info-maquina-sel"></span>
-            <button id="btnMejorarMaquina">⬆️ Mejorar (1🪵 1⚙️)</button>
-            <button id="btnAtacarCastillo" class="oculta">⚔️ Atacar Castillo Enemigo</button>
-            <button id="btnDispararCanon" class="oculta">💣 Disparar Cañón</button>
-            <button id="btnDeseleccionar">Deseleccionar</button>
-        </div>
-
     </div>
 
     <!-- REGISTRO DE EVENTOS (franja bajo la barra de botones) -->
@@ -150,6 +153,17 @@
         <div id="log-titulo">Registro:</div>
         <div id="log-contenido"></div>
     </div>
+
+    <div id="reglas-overlay" class="oculta">
+        <div id="reglas-box">
+            <div id="reglas-header">
+                <h2>📖 Reglas del juego</h2>
+                <button id="btnCerrarReglas">✖</button>
+            </div>
+            <div id="reglas-contenido">Cargando reglas...</div>
+        </div>
+    </div>
+
 
 </div>
 
@@ -174,6 +188,7 @@
     </div>
 </div>
 
-<script src="app.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script type="module" src="events.js"></script>
 </body>
 </html>
