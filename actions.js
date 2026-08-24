@@ -3,7 +3,7 @@ import { RECURSOS, EMOJI, NOMBRE, COSTOS, NODOS_TABLERO, CONEXIONES_TABLERO } fr
 import {
     gameState, maquinaSeleccionadaId, modoAccion,
     crearMaquina, crearMazoTerrenos,
-    recalcularProduccion, contarTerrenos, contarExtractores, contarMaquinasEnCastillo,
+    recalcularProduccion, contarTerrenos, contarMaquinasEnCastillo,
     buscarMaquina, iniciarNuevoEstado, setSeleccion, setModoAccion,
     tienePago, pagar, costoTexto
 } from './state.js';
