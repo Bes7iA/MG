@@ -13,7 +13,8 @@ export function crearJugador(numero) {
         castillo: { hp: 20, hpMax: 20, mejoras: 0, limiteMG: 3, canon: false, canonListo: false, canonDisparoUsado: false },
         maquinas: [],
         accionesTurno: { mgConstruida: false, extractorConstruido: false },
-        turnosSinConquista: 0
+        turnosSinConquista: 0,
+        extractoresConstruidos: 0
     };
 }
 
@@ -29,7 +30,8 @@ export function crearEstadoInicial() {
         jugadores: { 1: crearJugador(1), 2: crearJugador(2) },
         tablero: {},
         conquistaInicial: { orden: [], indice: 0 },
-        primeraProduccionHecha: false
+        primeraProduccionHecha: false,
+        recursoBonusPartida: null
     };
 }
 
@@ -63,6 +65,7 @@ export function recalcularProduccion(numJ) {
             if (casilla.dueno === numJ && casilla.tipo === r) total += 1;
             if (casilla.dueno === numJ && casilla.extractor && casilla.tipo === r) total += 1;
         });
+        if (gameState.recursoBonusPartida === r) total += 1;
         jugador.produccion[r] = total;
     });
 }
@@ -111,3 +114,4 @@ export function pagar(numJ, costo) {
 export function costoTexto(costo) {
     return Object.entries(costo).map(([k, v]) => `${v}${EMOJI[k]}`).join(' ');
 }
+

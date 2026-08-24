@@ -10,6 +10,8 @@ import {
     atacarCastilloConSeleccionada, activarModoDisparo, intentarDispararCanon, finalizarTurno,
     repararMaquina
 } from './actions.js';
+import { abrirReglas, cerrarReglas } from './reglas.js';
+
 
 function clicSeleccionarMaquina(numJ, id) {
     if (gameState.fase !== 'juego' || gameState.turnoActual !== numJ) return;
@@ -93,9 +95,11 @@ function inicializarEventos() {
     $('btnCancelarModo').addEventListener('click', cancelarModo);
     $('btnFinTurno').addEventListener('click', finalizarTurno);
 
+    $('btnReglas').addEventListener('click', abrirReglas);
+    $('btnCerrarReglas').addEventListener('click', cerrarReglas);
+
     $('btnMejorarMaquina').addEventListener('click', () => mejorarMaquinaSeleccionada());
     $('btnAtacarCastillo').addEventListener('click', () => atacarCastilloConSeleccionada());
-    $('btnDeseleccionar').addEventListener('click', () => { seleccionarMaquina(null); renderTodo(); });
 
     NODOS_TABLERO.forEach((id) => {
         const el = $(id);

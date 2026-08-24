@@ -145,15 +145,14 @@ export async function iniciarPartida() {
         gameState.tablero[id] = { tipo: mazo[i], revelado: false, dueno: null, extractor: false, ocupante: null };
     });
     const sobrante = mazo[29];
-    gameState.jugadores[1].recursos[sobrante] += 1;
-    gameState.jugadores[2].recursos[sobrante] += 1;
-    log(`🎁 Carta sobrante: ${NOMBRE[sobrante]}. +1 ${NOMBRE[sobrante]} para ambos jugadores.`);
+    gameState.recursoBonusPartida = sobrante;
+    log(`🎁 Carta sobrante: ${NOMBRE[sobrante]}. Ambos jugadores recibirán +1 de ${NOMBRE[sobrante]} en su producción de cada turno, durante toda la partida.`);
 
     renderTodo();
 
     await preguntar(
         '🎲 Tablero preparado',
-        `El tablero está listo para comenzar. En esta partida, ambos jugadores reciben +1 de ${NOMBRE[sobrante]} extra para empezar.`,
+        `El tablero está listo para comenzar. En esta partida, el recurso sobrante fue: ${NOMBRE[sobrante]}, se añadirá +1 a la produccion por turno de ambos jugadores.`,
         [{ label: 'Continuar', value: true, destacado: true }],
         true
     );
@@ -344,7 +343,7 @@ export function activarModoExtractor() {
     const numJ = gameState.turnoActual;
     const jugador = gameState.jugadores[numJ];
     if (jugador.accionesTurno.extractorConstruido) { log('🛑 Ya construiste un extractor este turno.'); return; }
-    if (contarExtractores(numJ) >= 3) { log('🛑 Ya tienes el máximo de 3 extractores.'); return; }
+    if (jugador.extractoresConstruidos >= 3) { log('🛑 Ya construiste el máximo de 3 extractores en esta partida.'); return; }
     if (!tienePago(numJ, COSTOS.extractor)) { log(`❌ Recursos insuficientes (necesitas ${costoTexto(COSTOS.extractor)}).`); return; }
     seleccionarMaquina(null);
     setModoAccion(modoAccion === 'extractor' ? null : 'extractor');
@@ -361,7 +360,7 @@ export async function intentarConstruirExtractor(nodoId) {
 
     const confirmado = await preguntar(
         '⛏️ Construir Extractor',
-        `Construirás un extractor de ${NOMBRE[casilla.tipo]}. Solo puedes tener 3 como máximo. Este extractor aumentará el ${NOMBRE[casilla.tipo]} que recibes al inicio de cada turno mientras controles este terreno.`,
+        `Construirás un extractor de ${NOMBRE[casilla.tipo]}. Solo puedes construir 3 en toda la partida (llevas ${jugador.extractoresConstruidos}/3). Este extractor aumentará el ${NOMBRE[casilla.tipo]} que recibes al inicio de cada turno mientras controles este terreno.`,
         [
             { label: 'Construir', value: true, destacado: true },
             { label: 'Cancelar', value: false }
@@ -373,6 +372,7 @@ export async function intentarConstruirExtractor(nodoId) {
     pagar(numJ, COSTOS.extractor);
     casilla.extractor = true;
     jugador.accionesTurno.extractorConstruido = true;
+    jugador.extractoresConstruidos += 1;
     setModoAccion(null);
 
     await usarMartilloSiHay(() => { jugador.recursos[casilla.tipo] += 1; }, `el extractor produce +1 ${NOMBRE[casilla.tipo]} de inmediato.`);

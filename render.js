@@ -192,24 +192,18 @@ export function renderBotonesInferiores() {
     const hayTerrenoParaExtractor = enJuego && Object.values(gameState.tablero).some((c) => c.dueno === numJ && !c.extractor);
 
     $('btnConstruirMG').disabled = !enJuego || jugador.accionesTurno.mgConstruida || contarMaquinasEnCastillo(numJ) >= 2 || !tienePago(numJ, COSTOS.maquina) || jugador.maquinas.length >= jugador.castillo.limiteMG;
-    $('btnConstruirExtractor').disabled = !enJuego || jugador.accionesTurno.extractorConstruido || contarExtractores(numJ) >= 3 || !tienePago(numJ, COSTOS.extractor) || !hayTerrenoParaExtractor;
+    $('btnConstruirExtractor').disabled = !enJuego || jugador.accionesTurno.extractorConstruido || jugador.extractoresConstruidos >= 3 || !tienePago(numJ, COSTOS.extractor) || !hayTerrenoParaExtractor;
     $('btnConstruirCanon').disabled = !enJuego || jugador.castillo.canon || !tienePago(numJ, COSTOS.canon);
     $('btnMejorarCastillo').disabled = !enJuego || jugador.castillo.mejoras >= 5 || !tienePago(numJ, COSTOS.mejoraCastillo);
     $('btnComerciar').disabled = !enJuego;
     $('btnFinTurno').disabled = !enJuego;
-    $('btnCancelarModo').classList.toggle('oculta', !modoAccion);
+    $('btnCancelarModo').disabled = !modoAccion;
 
-    const panelSel = $('panel-maquina-sel');
     const maquina = enJuego ? buscarMaquina(numJ, maquinaSeleccionadaId) : null;
-    panelSel.classList.toggle('oculta', !maquina);
-    if (maquina) {
-        $('info-maquina-sel').textContent = `Máquina #${maquina.id} — HP ${maquina.hp}/${maquina.hpMax} · Daño ${maquina.dano}`;
-        $('btnMejorarMaquina').disabled = maquina.mejoras >= 3 || !tienePago(numJ, COSTOS.mejoraMaquina);
-        const puedeAtacarCastillo = !maquina.accionRealizada && sonConectados(maquina.ubicacion, `castillo-p${rivalDe(numJ)}`);
-        $('btnAtacarCastillo').classList.toggle('oculta', !puedeAtacarCastillo);
-    } else if (enJuego) {
-        $('btnAtacarCastillo').classList.add('oculta');
-    }
+    $('btnMejorarMaquina').disabled = !maquina || maquina.mejoras >= 3 || !tienePago(numJ, COSTOS.mejoraMaquina);
+
+    const puedeAtacarCastillo = enJuego && maquina && !maquina.accionRealizada && sonConectados(maquina.ubicacion, `castillo-p${rivalDe(numJ)}`);
+    $('btnAtacarCastillo').disabled = !puedeAtacarCastillo;
 }
 
 export function dibujarConexionesSVG() {
